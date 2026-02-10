@@ -6,13 +6,12 @@
 #include "vm/execution.h"
 
 VM vm;
-
+uint8_t* bytecode = 0;
 int main() {
+    init(vm, bytecode);
     vm.reg[0] = encodeToBytes(127.7);
     vm.reg[1] = encodeToBytes(0.3);
-    add(vm.reg[2], vm.reg[0], vm.reg[1]);
-    std::cout << decodeToDouble(vm.reg[2]) << std::endl;
+    run(vm);
 
     return 0;
-
 }

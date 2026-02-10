@@ -11,4 +11,10 @@ struct VM {
     bool running;
 };
 
+void init(VM& vm, uint8_t* bytecode);
+void run(VM& vm);
+
+class vm {
+};
+
 #endif //SPROUT_LANG_VM_H
