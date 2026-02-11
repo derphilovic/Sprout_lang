@@ -46,7 +46,8 @@ inline void div(uint64_t& dst, uint64_t a, uint64_t b) {
 }
 
 inline void ret(uint64_t ret) {
-    std::cout << ret << std::endl;
+    double r = decodeToDouble(ret);
+    std::cout << r << std::endl;
 }
 
 class execution {
