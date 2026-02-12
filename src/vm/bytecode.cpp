@@ -5,22 +5,27 @@
 #include <vector>
 #include <filesystem>
 
-std::vector<std::byte> loadRawBytecode(const char* path) {
-    std::filesystem::path inputFilePath{path};
-    auto length = std::filesystem::file_size(inputFilePath);
-    if (length == 0) {
-        return {};  // empty vector
-    }
-    std::vector<std::byte> buffer(length);
-    std::ifstream inputFile(path, std::ios_base::binary);
-    inputFile.read(reinterpret_cast<char*>(buffer.data()), length);
-    inputFile.close();
+std::vector<std::byte> loadRawBytecode(const char* path)
+{
+    std::ifstream inputFile(path, std::ios::binary | std::ios::ate);
+    if (!inputFile)
+        return {};
+    auto size = inputFile.tellg();
+    if (size <= 0)
+        return {};
+
+    inputFile.seekg(0, std::ios::beg);
+    std::vector<std::byte> buffer(static_cast<size_t>(size));
+    inputFile.read(reinterpret_cast<char*>(buffer.data()), size);
     return buffer;
 }
 
-uint8_t* loadBytecode(const char* path) {
-    std::vector<std::byte> raw = loadRawBytecode(path);
-    return reinterpret_cast<uint8_t*>(raw.data());
+
+std::vector<uint8_t> loadBytecode(const char* path) {
+    auto raw = loadRawBytecode(path);
+    std::vector<uint8_t> vec(raw.size());
+    std::memcpy(vec.data(), raw.data(), raw.size());
+    return vec;
 }
 
 BCHeader loadHeader(const uint8_t* bytecode) {

@@ -7,6 +7,7 @@
 #define SPROUT_LANG_MAGIC 0x53505254
 #define SPROUT_LANG_VERSION 0x00000001
 #include <cstdint>
+#include <vector>
 
 struct BCHeader {
     uint32_t magic;
@@ -21,7 +22,7 @@ struct BCHeader {
     uint32_t code_offset;
 };
 
-uint8_t* loadBytecode(const char* path);
+std::vector<uint8_t> loadBytecode(const char* path);
 
 BCHeader loadHeader(const uint8_t* bytecode);
 
