@@ -1,11 +1,11 @@
 //
 // Created by philipp on 10/02/2026.
 //
-
 #ifndef SPROUT_LANG_BYTECODE_H
 #define SPROUT_LANG_BYTECODE_H
 
 #define SPROUT_LANG_MAGIC 0x53505254
+#define SPROUT_LANG_VERSION 0x00000001
 #include <cstdint>
 
 struct BCHeader {
@@ -20,6 +20,10 @@ struct BCHeader {
     uint32_t function_offset;
     uint32_t code_offset;
 };
+
+uint8_t* loadBytecode(const char* path);
+
+BCHeader loadHeader(const uint8_t* bytecode);
 
 class bytecode {
 };
