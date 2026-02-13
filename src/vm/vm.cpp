@@ -8,7 +8,6 @@
 void init(VM& vm, const char* path) {
     vm.ip = 0;
     vm.bytecode = loadBytecode(path);
-    vm.bytecode_size = sizeof(vm.bytecode);
     vm.running = true;
 }
 

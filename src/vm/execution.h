@@ -15,6 +15,7 @@ enum Opcode : uint8_t {
     OP_MUL,
     OP_DIV,
     OP_RET,
+    OP_LOAD64,
 };
 
 inline void add(uint64_t& dst, uint64_t a, uint64_t b) {
@@ -43,6 +44,11 @@ inline void div(uint64_t& dst, uint64_t a, uint64_t b) {
     double db = decodeToDouble(b);
     double res = da / db;
     dst = encodeToBytes(res);
+}
+
+inline void loadIntoReg(VM& vm, uint8_t reg) {
+    uint64_t val = (static_cast<uint64_t>(fetch(vm)) << 32) | fetch(vm);
+    vm.reg[reg] = val;
 }
 
 inline void ret(uint64_t ret) {
