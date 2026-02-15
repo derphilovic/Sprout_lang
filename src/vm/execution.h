@@ -6,56 +6,74 @@
 #include "decode.h"
 #include "vm.h"
 
-void execute(VM& vm, const decodedInstr& d);
 
+namespace sprout::execution {
+    void execute(vm::VM& vm, const decode::decodedInstr& d);
 
-enum Opcode : uint8_t {
-    OP_ADD,
-    OP_SUB,
-    OP_MUL,
-    OP_DIV,
-    OP_RET,
-    OP_LOAD64,
-};
+    enum Opcode : uint8_t {
+        OP_ADD,
+        OP_SUB,
+        OP_MUL,
+        OP_DIV,
+        OP_RET,
+        OP_LOAD64,
+        OP_CMP,
+        OP_JMP,
+        OP_DEBUG_RETURN,
+    };
 
-inline void add(uint64_t& dst, uint64_t a, uint64_t b) {
-    double da = decodeToDouble(a);
-    double db = decodeToDouble(b);
-    double res = da + db;
-    dst = encodeToBytes(res);
+    inline void add(uint64_t& dst, uint64_t a, uint64_t b) {
+        double da = decode::decodeToDouble(a);
+        double db = decode::decodeToDouble(b);
+        double res = da + db;
+        dst = decode::encodeToBytes(res);
+    }
+
+    inline void sub(uint64_t& dst, uint64_t a, uint64_t b) {
+        double da = decode::decodeToDouble(a);
+        double db = decode::decodeToDouble(b);
+        double res = da - db;
+        dst = decode::encodeToBytes(res);
+    }
+
+    inline void mul(uint64_t& dst, uint64_t a, uint64_t b) {
+        double da = decode::decodeToDouble(a);
+        double db = decode::decodeToDouble(b);
+        double res = da * db;
+        dst = decode::encodeToBytes(res);
+    }
+
+    inline void div(uint64_t& dst, uint64_t a, uint64_t b) {
+        double da = decode::decodeToDouble(a);
+        double db = decode::decodeToDouble(b);
+        double res = da / db;
+        dst = decode::encodeToBytes(res);
+    }
+
+    inline void loadIntoReg(vm::VM& vm, uint8_t reg) {
+        uint64_t val = fetch64(vm);
+        vm.reg[reg] = val;
+    }
+
+    inline void ret(uint64_t ret) {
+        double r = decode::decodeToDouble(ret);
+        std::cout << r << std::endl;
+    }
+
+    inline void compare(vm::VM &vm, uint64_t a, uint64_t b) {
+        double da = decode::decodeToDouble(a);
+        double db = decode::decodeToDouble(b);
+
+        if (da == db) vm.jmpFlag = 0;
+        else if (da < db) vm.jmpFlag = -1;
+        else vm.jmpFlag = 1;
+    };
+
+    inline void jmp(vm::VM& vm) {
+        if (vm.jmpFlag == 0) vm.ip = fetch(vm);
+        else vm.ip += 4;
+    }
 }
-
-inline void sub(uint64_t& dst, uint64_t a, uint64_t b) {
-    double da = decodeToDouble(a);
-    double db = decodeToDouble(b);
-    double res = da - db;
-    dst = encodeToBytes(res);
-}
-
-inline void mul(uint64_t& dst, uint64_t a, uint64_t b) {
-    double da = decodeToDouble(a);
-    double db = decodeToDouble(b);
-    double res = da * db;
-    dst = encodeToBytes(res);
-}
-
-inline void div(uint64_t& dst, uint64_t a, uint64_t b) {
-    double da = decodeToDouble(a);
-    double db = decodeToDouble(b);
-    double res = da / db;
-    dst = encodeToBytes(res);
-}
-
-inline void loadIntoReg(VM& vm, uint8_t reg) {
-    uint64_t val = (static_cast<uint64_t>(fetch(vm)) << 32) | fetch(vm);
-    vm.reg[reg] = val;
-}
-
-inline void ret(uint64_t ret) {
-    double r = decodeToDouble(ret);
-    std::cout << r << std::endl;
-}
-
 class execution {
 };
 

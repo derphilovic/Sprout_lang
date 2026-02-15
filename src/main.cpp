@@ -5,11 +5,11 @@
 #include "vm/decode.h"
 #include "vm/execution.h"
 
-VM vm;
+sprout::vm::VM vm;
 
 int main() {
-    init(vm, "test.spbt");
-    run(vm);
+    sprout::vm::init(vm, "test.spbt");
+    sprout::vm::run(vm);
 
     return 0;
 }
