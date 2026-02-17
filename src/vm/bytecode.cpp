@@ -29,15 +29,15 @@ namespace sprout::bytecode {
         return vec;
     }
 
-    BCHeader loadHeader(const uint8_t* bytecode) {
-        BCHeader header{};
-        std::memcpy(&header, bytecode, sizeof(BCHeader));
-        if (header.magic != SPROUT_LANG_MAGIC) {
+    BCSubHeader loadSubHeader(const uint8_t* bytecode) {
+        BCSubHeader subHeader{};
+        std::memcpy(&subHeader, bytecode, sizeof(BCSubHeader));
+        if (subHeader.magic != SPROUT_LANG_MAGIC) {
             throw std::runtime_error("Invalid bytecode file");
         }
-        if (header.version != SPROUT_LANG_VERSION) {
+        if (subHeader.version != SPROUT_LANG_VERSION) {
             throw std::runtime_error("Unsupported bytecode version");
         }
-        return header;
+        return subHeader;
     }
 }

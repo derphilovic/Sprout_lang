@@ -10,9 +10,18 @@ namespace sprout::vm {
         std::vector<uint8_t> bytecode;
         std::size_t ip;
 
+        uint64_t stack[4096];
+        std::size_t sp;
+
         int8_t jmpFlag;
 
         bool running;
+    };
+
+    struct FunctionInfo {
+        uint32_t entry_ip;
+        uint16_t argCount;
+        uint16_t localCount;
     };
 
     inline uint32_t fetch(VM& vm) {

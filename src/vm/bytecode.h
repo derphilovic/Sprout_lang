@@ -8,24 +8,31 @@
 #define SPROUT_LANG_VERSION 0x00000001
 #include <cstdint>
 #include <vector>
+#include "vm.h"
 
 namespace sprout::bytecode {
-    struct BCHeader {
+    struct BCSubHeader {
         uint32_t magic;
         uint32_t version;
         uint32_t flags;
 
-        uint32_t import_count;
-        uint32_t function_count;
+        uint32_t importCount;
+        uint32_t functionCount;
 
-        uint32_t import_offset;
-        uint32_t function_offset;
-        uint32_t code_offset;
+        uint32_t importOffset;
+        uint32_t functionOffset;
+        uint32_t codeOffset;
+    };
+
+    struct BCHeader {
+        BCSubHeader info;
+        std::vector<vm::FunctionInfo> importTable;
+        std::vector<vm::FunctionInfo> functionTable;
     };
 
     std::vector<uint8_t> loadBytecode(const char* path);
 
-    BCHeader loadHeader(const uint8_t* bytecode);
+    BCSubHeader loadHeader(const uint8_t* bytecode);
 
     class bytecode {
     };
