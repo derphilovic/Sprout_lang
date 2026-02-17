@@ -18,8 +18,11 @@ namespace sprout::execution {
         OP_RET,
         OP_LOAD64,
         OP_CMP,
-        OP_JMP,
         OP_DEBUG_RETURN,
+        OP_JE,
+        OP_JNE,
+        OP_JL,
+        OP_JG,
     };
 
     inline void add(uint64_t& dst, uint64_t a, uint64_t b) {
@@ -64,15 +67,32 @@ namespace sprout::execution {
         double da = decode::decodeToDouble(a);
         double db = decode::decodeToDouble(b);
 
-        if (da == db) vm.jmpFlag = 0;
+        if (da == db) vm.jmpFlag = 1;
         else if (da < db) vm.jmpFlag = -1;
-        else vm.jmpFlag = 1;
-    };
+        else if (da > db) vm.jmpFlag = 2;
+        else vm.jmpFlag = 0;
+    }
 
-    inline void jmp(vm::VM& vm) {
-        if (vm.jmpFlag == 0) vm.ip = fetch(vm);
+    inline void je(vm::VM& vm) {
+        if (vm.jmpFlag == 1) vm.ip = fetch(vm);
         else vm.ip += 4;
     }
+
+    inline void jne(vm::VM& vm) {
+        if (vm.jmpFlag == 0) vm.ip = vm::fetch(vm);
+        else vm.ip += 4;
+    }
+
+    inline void jl(vm::VM& vm) {
+        if (vm.jmpFlag  == -1) vm.ip = vm::fetch(vm);
+        else vm.ip += 4;
+    }
+
+    inline void jg(vm::VM& vm) {
+        if (vm.jmpFlag == 2)  vm.ip = vm::fetch(vm);
+        else vm.ip += 4;
+    }
+
 }
 class execution {
 };

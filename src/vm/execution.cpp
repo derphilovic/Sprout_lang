@@ -26,9 +26,17 @@ namespace sprout::execution {
             case OP_CMP:
                 compare(vm, vm.reg[d.ra], vm.reg[d.rb]);
                 break;
-            case OP_JMP:
-                jmp(vm);
+            case OP_JE:
+                je(vm);
                 break;
+            case OP_JNE:
+                jne(vm);
+                break;
+            case OP_JL:
+                jl(vm);
+                break;
+            case OP_JG:
+                jg(vm);
             case OP_RET:
                 ret( vm.reg[d.ra]);
                 vm.running = false;
