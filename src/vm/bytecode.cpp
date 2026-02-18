@@ -29,9 +29,9 @@ namespace sprout::bytecode {
         return vec;
     }
 
-    BCSubHeader loadSubHeader(const uint8_t* bytecode) {
-        BCSubHeader subHeader{};
-        std::memcpy(&subHeader, bytecode, sizeof(BCSubHeader));
+    BCHeader loadHeader(const std::vector<uint8_t>& bytecode) {
+        BCHeader subHeader{};
+        std::memcpy(&subHeader, bytecode.data(), sizeof(BCHeader));
         if (subHeader.magic != SPROUT_LANG_MAGIC) {
             throw std::runtime_error("Invalid bytecode file");
         }

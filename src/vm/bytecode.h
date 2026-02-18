@@ -11,7 +11,7 @@
 #include "vm.h"
 
 namespace sprout::bytecode {
-    struct BCSubHeader {
+    struct BCHeader {
         uint32_t magic;
         uint32_t version;
         uint32_t flags;
@@ -24,15 +24,10 @@ namespace sprout::bytecode {
         uint32_t codeOffset;
     };
 
-    struct BCHeader {
-        BCSubHeader info;
-        std::vector<vm::FunctionInfo> importTable;
-        std::vector<vm::FunctionInfo> functionTable;
-    };
 
     std::vector<uint8_t> loadBytecode(const char* path);
 
-    BCSubHeader loadHeader(const uint8_t* bytecode);
+    BCHeader loadHeader(const uint8_t* bytecode);
 
     class bytecode {
     };

@@ -18,7 +18,7 @@ namespace sprout::vm {
         bool running;
     };
 
-    struct FunctionInfo {
+    struct functionInfo {
         uint32_t entry_ip;
         uint16_t argCount;
         uint16_t localCount;

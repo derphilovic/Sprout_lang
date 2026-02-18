@@ -48,5 +48,14 @@ namespace sprout::decode {
         decInstr.rc = rc(instr);
         return decInstr;
     }
+
+    inline void push(vm::VM& vm, uint64_t a) {
+        vm.stack[vm.sp++] = a;
+    }
+
+    inline uint64_t pop(vm::VM& vm) {
+        return vm.stack[vm.sp--];
+    }
+
 }
 #endif //SPROUT_LANG_DECODE_H
