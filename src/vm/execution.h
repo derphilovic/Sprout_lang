@@ -74,12 +74,12 @@ namespace sprout::execution {
     }
 
     inline void je(vm::VM& vm) {
-        if (vm.jmpFlag == 1) vm.ip = fetch(vm);
+        if (vm.jmpFlag == 1) vm.ip = vm::fetch(vm);
         else vm.ip += 4;
     }
 
     inline void jne(vm::VM& vm) {
-        if (vm.jmpFlag == 0) vm.ip = vm::fetch(vm);
+        if (vm.jmpFlag != 1) vm.ip = vm::fetch(vm);
         else vm.ip += 4;
     }
 
