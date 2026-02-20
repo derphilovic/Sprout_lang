@@ -15,7 +15,7 @@ namespace sprout::execution {
         OP_SUB,
         OP_MUL,
         OP_DIV,
-        OP_RET,
+        OP_END,
         OP_LOAD64,
         OP_CMP,
         OP_DEBUG_RETURN,
@@ -23,6 +23,12 @@ namespace sprout::execution {
         OP_JNE,
         OP_JL,
         OP_JG,
+        OP_CALL,
+        OP_RET,
+        OP_PUSH,
+        OP_POP,
+        OP_INSERT_INTO_STACK,
+        OP_READ_FROM_STACK
     };
 
     inline void add(uint64_t& dst, uint64_t a, uint64_t b) {
@@ -58,7 +64,7 @@ namespace sprout::execution {
         vm.reg[reg] = val;
     }
 
-    inline void ret(uint64_t ret) {
+    inline void end(uint64_t ret) {
         double r = decode::decodeToDouble(ret);
         std::cout << r << std::endl;
     }
@@ -93,9 +99,43 @@ namespace sprout::execution {
         else vm.ip += 4;
     }
 
-}
-class execution {
-};
+    inline void call(vm::VM& vm, uint8_t a, uint8_t b, uint8_t c) {
+        uint32_t index  = (static_cast<uint32_t>(a) << 16) | (static_cast<uint32_t>(b) << 8) | static_cast<uint32_t>(c); // Get index of Function
+        vm::functionInfo f = vm.functionTable.at(index); // Getting function Metadata
+        decode::push(vm, vm.fp); // Push FP
+        decode::push(vm, vm.ip); // Push IP
+        vm.fp = vm.sp; // Set new FP
+        vm.sp += f.frameSize; // Reserve space for local variables
+        vm.ip = f.entryIP; // Setting IP to function entry
+    }
 
+    inline void ret(vm::VM& vm, uint8_t a, uint8_t b, uint8_t c) {
+        uint32_t index  = (static_cast<uint32_t>(a) << 16) | (static_cast<uint32_t>(b) << 8) | static_cast<uint32_t>(c); // Get index of Function
+        vm::functionInfo f = vm.functionTable.at(index); // Getting function Metadata
+
+        vm.sp -= f.frameSize; // Deallocating reserved space for local vars or arguments
+        vm.ip = decode::pop(vm); // Restore IP
+        vm.fp = decode::pop(vm); // Restore FP
+    }
+
+    inline void push(vm::VM& vm, __uint64_t target) {
+        decode::push(vm, target);
+    }
+
+    inline void pop(vm::VM& vm, uint64_t& dst) {
+        dst = decode::pop(vm);
+    }
+
+    inline void insertIntoStack(vm::VM& vm, uint8_t a, uint8_t b, uint64_t target) {
+        uint16_t point = (static_cast<uint16_t>(a) << 8) | static_cast<uint16_t>(b);
+        vm.stack[point] = target;
+    }
+
+    inline void readFromStack(vm::VM& vm, uint8_t a, uint8_t b, uint64_t& target) {
+        uint16_t point = (static_cast<uint16_t>(a) << 8) | static_cast<uint16_t>(b);
+        target = vm.stack[point];
+    }
+
+}
 
 #endif //SPROUT_LANG_EXECUTION_H

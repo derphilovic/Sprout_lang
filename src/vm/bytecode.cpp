@@ -5,6 +5,8 @@
 #include <vector>
 #include <filesystem>
 
+#include "vm.h"
+
 namespace sprout::bytecode {
     std::vector<std::byte> loadRawBytecode(const char* path)
     {
@@ -33,11 +35,21 @@ namespace sprout::bytecode {
         BCHeader subHeader{};
         std::memcpy(&subHeader, bytecode.data(), sizeof(BCHeader));
         if (subHeader.magic != SPROUT_LANG_MAGIC) {
-            throw std::runtime_error("Invalid bytecode file");
+            throw std::runtime_error("Invalid bytecode file! SPRT Magic missing!");
         }
         if (subHeader.version != SPROUT_LANG_VERSION) {
             throw std::runtime_error("Unsupported bytecode version");
         }
         return subHeader;
+    }
+
+    std::vector<vm::functionInfo> loadFunctionTable(BCHeader header, vm::VM& vm) {
+        std::vector<vm::functionInfo> f;
+         uint32_t addr = sizeof(BCHeader);
+        for (uint32_t i = 0; i < header.functionCount; ++i) {
+            f.push_back(vm::fetchFuncMetadata(vm, addr));
+            addr += sizeof(vm::functionInfo);
+        }
+        return f;
     }
 }

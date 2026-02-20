@@ -1,14 +1,17 @@
 #include "vm.h"
 
 #include "bytecode.h"
+#include "bytecode.h"
 #include "decode.h"
 #include "execution.h"
 
 namespace sprout::vm {
     void init(VM& vm, const char* path) {
-        vm.ip = 0;
-        vm.jmpFlag = 2;
         vm.bytecode = bytecode::loadBytecode(path);
+        vm.header = bytecode::loadHeader(vm.bytecode);
+        vm.functionTable = bytecode::loadFunctionTable(vm.header, vm);
+        vm.ip = vm.header.codeOffset;
+        vm.jmpFlag = 2;
         vm.running = true;
     }
 

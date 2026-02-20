@@ -50,11 +50,14 @@ namespace sprout::decode {
     }
 
     inline void push(vm::VM& vm, uint64_t a) {
+        if (vm.sp >= 4096) {
+            throw std::runtime_error("!!!STACK OVERFLOW!!!");;
+        }
         vm.stack[vm.sp++] = a;
     }
 
     inline uint64_t pop(vm::VM& vm) {
-        return vm.stack[vm.sp--];
+        return vm.stack[--vm.sp];
     }
 
 }
