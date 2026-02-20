@@ -19,15 +19,15 @@ namespace sprout::execution {
         OP_LOAD64,
         OP_CMP,
         OP_DEBUG_RETURN,
-        OP_JE,
+        OP_JE, //8
         OP_JNE,
-        OP_JL,
+        OP_JL, //10
         OP_JG,
-        OP_CALL,
+        OP_CALL, //12
         OP_RET,
-        OP_PUSH,
+        OP_PUSH, //14
         OP_POP,
-        OP_INSERT_INTO_STACK,
+        OP_INSERT_INTO_STACK,  //16
         OP_READ_FROM_STACK
     };
 
@@ -110,18 +110,14 @@ namespace sprout::execution {
     }
 
     inline void ret(vm::VM& vm, uint8_t a, uint8_t b, uint8_t c) {
-        uint32_t index  = (static_cast<uint32_t>(a) << 16) | (static_cast<uint32_t>(b) << 8) | static_cast<uint32_t>(c); // Get index of Function
-        vm::functionInfo f = vm.functionTable.at(index); // Getting function Metadata
-
-        vm.sp -= f.frameSize; // Deallocating reserved space for local vars or arguments
+        vm.sp = vm.fp; // Deallocating reserved space for local vars or arguments
         vm.ip = decode::pop(vm); // Restore IP
         vm.fp = decode::pop(vm); // Restore FP
     }
 
-    inline void push(vm::VM& vm, __uint64_t target) {
+    inline void push(vm::VM& vm, uint64_t target) {
         decode::push(vm, target);
     }
-
     inline void pop(vm::VM& vm, uint64_t& dst) {
         dst = decode::pop(vm);
     }
