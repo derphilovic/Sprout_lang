@@ -32,31 +32,67 @@ namespace sprout::execution {
     };
 
     inline void add(uint64_t& dst, uint64_t a, uint64_t b) {
-        double da = decode::decodeToDouble(a);
-        double db = decode::decodeToDouble(b);
-        double res = da + db;
-        dst = decode::encodeToBytes(res);
+        if (decode::isDouble(a) && decode::isDouble(b)) {
+            double da = decode::decodeDouble(a);
+            double db = decode::decodeDouble(b);
+            double res = da + db;
+            dst = decode::encodeDouble(res);
+        }else if (decode::isInt(a) && decode::isInt(b)) {
+            int64_t da = decode::decodeINT(a);
+            int64_t db = decode::decodeINT(b);
+            int64_t res = da + db;
+            dst = decode::encodeINT(res);
+        }else {
+            throw std::runtime_error("Invalid Operand types!");
+        }
     }
 
     inline void sub(uint64_t& dst, uint64_t a, uint64_t b) {
-        double da = decode::decodeToDouble(a);
-        double db = decode::decodeToDouble(b);
-        double res = da - db;
-        dst = decode::encodeToBytes(res);
+        if (decode::isDouble(a) && decode::isDouble(b)) {
+            double da = decode::decodeDouble(a);
+            double db = decode::decodeDouble(b);
+            double res = da - db;
+            dst = decode::encodeDouble(res);
+        }else if (decode::isInt(a) && decode::isInt(b)) {
+            int64_t da = decode::decodeINT(a);
+            int64_t db = decode::decodeINT(b);
+            int64_t res = da - db;
+            dst = decode::encodeINT(res);
+        }else {
+            throw std::runtime_error("Invalid Operand types!");
+        }
     }
 
     inline void mul(uint64_t& dst, uint64_t a, uint64_t b) {
-        double da = decode::decodeToDouble(a);
-        double db = decode::decodeToDouble(b);
-        double res = da * db;
-        dst = decode::encodeToBytes(res);
+        if (decode::isDouble(a) && decode::isDouble(b)) {
+            double da = decode::decodeDouble(a);
+            double db = decode::decodeDouble(b);
+            double res = da * db;
+            dst = decode::encodeDouble(res);
+        }else if (decode::isInt(a) && decode::isInt(b)) {
+            int64_t da = decode::decodeINT(a);
+            int64_t db = decode::decodeINT(b);
+            int64_t res = da * db;
+            dst = decode::encodeINT(res);
+        }else {
+            throw std::runtime_error("Invalid Operand types!");
+        }
     }
 
     inline void div(uint64_t& dst, uint64_t a, uint64_t b) {
-        double da = decode::decodeToDouble(a);
-        double db = decode::decodeToDouble(b);
-        double res = da / db;
-        dst = decode::encodeToBytes(res);
+        if (decode::isDouble(a) && decode::isDouble(b)) {
+            double da = decode::decodeDouble(a);
+            double db = decode::decodeDouble(b);
+            double res = da / db;
+            dst = decode::encodeDouble(res);
+        }else if (decode::isInt(a) && decode::isInt(b)) {
+            int64_t da = decode::decodeINT(a);
+            int64_t db = decode::decodeINT(b);
+            int64_t res = da / db;
+            dst = decode::encodeINT(res);
+        }else {
+            throw std::runtime_error("Invalid Operand types!");
+        }
     }
 
     inline void loadIntoReg(vm::VM& vm, uint8_t reg) {
@@ -65,18 +101,35 @@ namespace sprout::execution {
     }
 
     inline void end(uint64_t ret) {
-        double r = decode::decodeToDouble(ret);
-        std::cout << r << std::endl;
+        if (decode::isInt(ret)) {
+            int64_t r = decode::decodeINT(ret);
+            std::cout << r << std::endl;
+        } else if (decode::isDouble(ret)) {
+            double r = decode::decodeDouble(ret);
+            std::cout << r << std::endl;
+        }
     }
 
     inline void compare(vm::VM &vm, uint64_t a, uint64_t b) {
-        double da = decode::decodeToDouble(a);
-        double db = decode::decodeToDouble(b);
+        if (decode::isDouble(a) && decode::isDouble(b)) {
+            double da = decode::decodeDouble(a);
+            double db = decode::decodeDouble(b);
 
-        if (da == db) vm.jmpFlag = 1;
-        else if (da < db) vm.jmpFlag = -1;
-        else if (da > db) vm.jmpFlag = 2;
-        else vm.jmpFlag = 0;
+            if (da == db) vm.jmpFlag = 1;
+            else if (da < db) vm.jmpFlag = -1;
+            else if (da > db) vm.jmpFlag = 2;
+            else vm.jmpFlag = 0;
+        } else if (decode::isInt(a) && decode::isInt(b)) {
+            int64_t da = decode::decodeINT(a);
+            int64_t db = decode::decodeINT(b);
+
+            if (da == db) vm.jmpFlag = 1;
+            else if (da < db) vm.jmpFlag = -1;
+            else if (da > db) vm.jmpFlag = 2;
+            else vm.jmpFlag = 0;
+        } else {
+            throw std::runtime_error("Invalid Operand types");
+        }
     }
 
     inline void je(vm::VM& vm) {
