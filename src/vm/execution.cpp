@@ -50,6 +50,9 @@ namespace sprout::execution {
             case OP_POP:
                 pop(vm, vm.reg[d.ra]);
                 break;
+            case OP_MOV:
+                mov(vm, d.ra, d.rb);
+                break;
             case OP_INSERT_INTO_STACK:
                 insertIntoStack(vm, d.ra, d.rb, vm.reg[d.rc]);
                 break;

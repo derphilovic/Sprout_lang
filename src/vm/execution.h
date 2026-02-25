@@ -28,7 +28,8 @@ namespace sprout::execution {
         OP_PUSH, //14
         OP_POP,
         OP_INSERT_INTO_STACK,  //16
-        OP_READ_FROM_STACK
+        OP_READ_FROM_STACK,
+        OP_MOV,
     };
 
     inline void add(uint64_t& dst, uint64_t a, uint64_t b) {
@@ -183,6 +184,10 @@ namespace sprout::execution {
     inline void readFromStack(vm::VM& vm, uint8_t a, uint8_t b, uint64_t& target) {
         uint16_t point = (static_cast<uint16_t>(a) << 8) | static_cast<uint16_t>(b);
         target = vm.stack[point];
+    }
+
+    inline void mov(vm::VM& vm, uint8_t dst, uint8_t src) {
+        vm.reg[dst] = vm.reg[src];
     }
 
 }
