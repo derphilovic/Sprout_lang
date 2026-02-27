@@ -13,4 +13,6 @@ add_executable(Sprout_lang
         src/vm/bytecode.h
         src/vm/execution.cpp
         src/vm/execution.h
+        src/vm/heap.cpp
+        src/vm/heap.h
 )
