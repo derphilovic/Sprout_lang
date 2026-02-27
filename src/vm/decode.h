@@ -36,6 +36,10 @@ namespace sprout::decode {
         return !isDouble(v) && getTag(v) == TAG_INT48;
     }
 
+    inline bool isPointer(uint64_t v) {
+        return !isDouble(v) && getTag(v) == TAG_POINTER;
+    }
+
     inline double decodeDouble(uint64_t reg) {
         double d;
         std::memcpy(&d, &reg, sizeof(double));
@@ -56,6 +60,14 @@ namespace sprout::decode {
         int64_t enc = num & 0x0000FFFFFFFFFFFFULL;
         if (enc & (1LL << 47)) enc |= 0xFFFF000000000000ULL;
         return enc;
+    }
+
+    inline uint64_t encodePointer(uint64_t v) {
+        return NAN_BASE | (uint64_t(TAG_POINTER) << 48) | (v & 0x0000FFFFFFFFFFFFULL);
+    }
+
+    inline void* decodePointer(uint64_t r) {
+        return reinterpret_cast<void*>(r & 0x0000FFFFFFFFFFFFULL);
     }
 
     inline uint8_t op(uint32_t instr) {
