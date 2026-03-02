@@ -65,12 +65,10 @@ namespace sprout::heap {
     std::vector<uint64_t*> markObjects(vm::VM& vm) {
         std::vector<uint64_t*> ptrHolder;
         for (auto& r : vm.reg) {
-            markObject(r);
-            ptrHolder.push_back(&r);
+            if (markObject(r)) ptrHolder.push_back(&r);
         }
         for (uint64_t i = 0; i < vm.sp; i++) {
-            markObject(vm.stack[i]);
-            ptrHolder.push_back(&vm.stack[i]);
+            if (markObject(vm.stack[i])) ptrHolder.push_back(&vm.stack[i]);
         }
         return ptrHolder;
     }

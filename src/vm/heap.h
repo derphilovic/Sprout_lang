@@ -41,11 +41,13 @@ namespace sprout::heap {
         size_t max;
     };
 
-    inline void markObject(uint64_t& r) {
+    inline bool markObject(uint64_t& r) {
         if (decode::isPointer(r)) {
             auto* hdr = static_cast<objHeader*>(decode::decodePointer(r)) - 1; // step back to header
             hdr->flags |= FLAG_MARKED;
+            return true;
         }
+        return false;
     }
 
 
