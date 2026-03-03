@@ -18,11 +18,30 @@ namespace sprout::heap {
             Heap.chunks.push_back(c);
         }
 
-    void* heapAlloc (HEAP& h, size_t size, uint16_t type, vm::VM vm) {
+        void* gcCollectedHeapAlloc (HEAP& h, size_t size, uint16_t type, vm::VM& vm) {
         HEAP& active = vm.heapAUsed ? vm.heapA : vm.heapB;
         if (active.totalAllocated > active.max * 0.7) {
             compactingGarbageCollect(vm);
         }
+        size_t total = align(sizeof(objHeader) + size);
+        if (h.chunks.empty() || h.chunks.back().used + total > CHUNK_SIZE) {
+            allocNewChunk(h);
+        }
+        CHUNK& c = h.chunks.back();
+        void* ptr = c.mem + c.used;
+
+        objHeader* hdr = reinterpret_cast<objHeader*>(ptr);
+        hdr->size = total;
+        hdr->type = type;
+        hdr->flags = 0;
+
+        c.used += total;
+        h.totalAllocated += total;
+
+        return hdr + 1;
+        }
+
+    void* heapAlloc (HEAP& h, size_t size, uint16_t type) {
         size_t total = align(sizeof(objHeader) + size);
         if (h.chunks.empty() || h.chunks.back().used + total > CHUNK_SIZE) {
             allocNewChunk(h);
@@ -46,6 +65,7 @@ namespace sprout::heap {
             std::free(c.mem);
         }
         h.chunks.erase(h.chunks.begin(), h.chunks.end());
+        h.totalAllocated = 0;
     }
 
     void freeChunk(CHUNK& c) {

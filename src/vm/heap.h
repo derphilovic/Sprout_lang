@@ -53,6 +53,7 @@ namespace sprout::heap {
     void compactingGarbageCollect(vm::VM& vm);
     void freeHeap(HEAP& h);
     void* heapAlloc (HEAP& h, size_t size, uint16_t type);
+    void* gcCollectedHeapAlloc (HEAP& h, size_t size, uint16_t type, vm::VM& vm);
 
 }
 #endif
