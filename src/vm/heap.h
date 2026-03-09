@@ -17,6 +17,7 @@ namespace sprout::heap {
         uint32_t size;
         uint16_t type;
         uint16_t flags;
+        uint32_t forwarded;
     };
 
     enum objType {
@@ -27,6 +28,12 @@ namespace sprout::heap {
     enum flags : uint16_t {
         FLAG_UNMARKED,
         FLAG_MARKED
+    };
+
+    struct arrayObj {
+    objHeader header;
+    uint32_t type;
+    uint32_t length;
     };
 
     struct CHUNK {
@@ -45,7 +52,7 @@ namespace sprout::heap {
     void compactingGarbageCollect(vm::VM& vm);
     void freeHeap(HEAP& h);
     void* heapAlloc (HEAP& h, size_t size, uint16_t type);
-    void* gcCollectedHeapAlloc (HEAP& h, size_t size, uint16_t type, vm::VM& vm);
+    void* gcCollectedHeapAlloc (size_t size, uint16_t type, vm::VM& vm);
 
 }
 #endif

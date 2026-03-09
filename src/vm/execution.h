@@ -29,7 +29,7 @@ namespace sprout::execution {
         OP_POP,
         OP_INSERT_INTO_STACK,  //16
         OP_READ_FROM_STACK,
-        OP_MOV,
+        OP_MOV, //18
     };
 
     inline void add(uint64_t& dst, uint64_t a, uint64_t b) {

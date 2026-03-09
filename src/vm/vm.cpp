@@ -4,7 +4,7 @@
 #include "decode.h"
 #include "execution.h"
 #include "heap.h"
-#define HEAPSIZE (512*1024*1024)
+constexpr size_t HEAPSIZE = (512 * 1024 * 1024);
 
 namespace sprout::vm {
     void init(VM& vm, const char* path) {

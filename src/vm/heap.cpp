@@ -27,8 +27,6 @@ namespace sprout::heap {
             Heap.chunks.push_back(c);
         }
 
-
-
     void* heapAlloc (HEAP& h, size_t size, uint16_t type) {
         size_t total = align(sizeof(objHeader) + size);
         if (h.chunks.empty() || h.chunks.back().used + total > CHUNK_SIZE) {
@@ -83,14 +81,27 @@ namespace sprout::heap {
         return objects;
     }
 
-
     std::vector<uint64_t*> markObjects(vm::VM& vm) {
+        HEAP*& h = vm.heapAUsed ? vm.heapA : vm.heapB;
+        std::vector<objHeader*> objects = getAllObjects(*h);
         std::vector<uint64_t*> ptrHolder;
         for (auto& r : vm.reg) {
             if (markObject(r)) ptrHolder.push_back(&r);
         }
         for (uint64_t i = 0; i < vm.sp; i++) {
             if (markObject(vm.stack[i])) ptrHolder.push_back(&vm.stack[i]);
+        }
+        for (auto object : objects) {
+            if (object->type == OBJ_ARRAY) {
+                auto* array = reinterpret_cast<arrayObj *>(object);
+                if (array->type == decode::TAG_POINTER) {
+                    auto* data = reinterpret_cast<uint64_t*>(
+                        reinterpret_cast<uint8_t*>(array) + sizeof(arrayObj));
+                    for (uint32_t i = 0; i < array->length; i++) {
+                        if (markObject(data[i])) ptrHolder.push_back(&data[i]);
+                    }
+                }
+            }
         }
         return ptrHolder;
     }
@@ -127,6 +138,16 @@ namespace sprout::heap {
                 moveObjects(*vm.heapB, *vm.heapA, ptrHolder); //Compact heapB into heapA
                 vm.heapAUsed = true;
             }
+    }
+
+    void initArray(vm::VM& vm, uint8_t dst, uint8_t len, uint8_t type) {
+        HEAP*& h = vm.heapAUsed ? vm.heapA : vm.heapB;
+        auto* ptr = static_cast<arrayObj*>(gcCollectedHeapAlloc(vm.reg[len] + (sizeof(uint32_t) * 2), OBJ_ARRAY, vm)) - 1;
+        ptr->length = vm.reg[len];
+        ptr->type = vm.reg[type];
+        std::memset(ptr + sizeof(arrayObj), 0, ptr->length * sizeof(uint64_t));
+
+        vm.reg[dst] = decode::encodePointer(reinterpret_cast<uint64_t>(ptr));
     }
 
 
