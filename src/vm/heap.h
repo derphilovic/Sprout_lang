@@ -17,7 +17,7 @@ namespace sprout::heap {
         uint32_t size;
         uint16_t type;
         uint16_t flags;
-        uint32_t forwarded;
+        uint64_t forwarded;
     };
 
     enum objType {

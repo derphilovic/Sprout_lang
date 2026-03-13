@@ -39,6 +39,7 @@ namespace sprout::heap {
         hdr->size = total;
         hdr->type = type;
         hdr->flags = 0;
+        hdr->forwarded = reinterpret_cast<uint64_t>(nullptr);
 
         c.used += total;
         h.totalAllocated += total;
@@ -106,36 +107,45 @@ namespace sprout::heap {
         return ptrHolder;
     }
 
-    void moveObjects(HEAP& h1, HEAP& h2, std::vector<uint64_t*> ptrHolder) {
+    void moveObjects(HEAP& h1, HEAP& h2) {
         for (auto& c : h1.chunks) {
             uint32_t i = 0;
+
             while (i < c.used) {
                 auto* obj = reinterpret_cast<objHeader*>(c.mem + i);
+
                 if (obj->flags == FLAG_MARKED) {
                     auto* newAddr = static_cast<objHeader*>(heapAlloc(h2, obj->size, obj->type)); //get a new * address for obj from heapAlloc
+
                     std::memcpy(newAddr, obj + 1, obj->size - sizeof(objHeader)); //copy data from the old obj to the new obj
-                    for (auto a : ptrHolder) {
-                        if (decode::decodePointer(*a) == static_cast<void*>(obj + 1)) {
-                            uint64_t encoded = decode::encodePointer(reinterpret_cast<uint64_t>(newAddr));
-                            *a = encoded; //Change (in reg or stack) saved pointer from old to new
-                        }
-                    }
+
+                    obj->forwarded = reinterpret_cast<uint64_t>(newAddr);
                 }
                 i += obj->size;
             }
-            freeChunk( c);
         }
-        h1.chunks.erase(h1.chunks.begin(), h1.chunks.end());
+    }
+
+    void updatePtrHolder(HEAP& h, std::vector<uint64_t*>& ptrHolder) {
+        for (auto& c : ptrHolder) {
+            void* raw = decode::decodePointer(*c);
+            auto* hdr = static_cast<objHeader*>(raw) - 1;
+            *c = decode::encodePointer(hdr->forwarded);
+
+        }
+        freeHeap(h);
     }
 
     void compactingGarbageCollect(vm::VM& vm) {
             std::vector<uint64_t*> ptrHolder = markObjects(vm); //Get Stack slots or regs with heap pointers
 
             if (vm.heapAUsed) {
-                moveObjects(*vm.heapA, *vm.heapB, ptrHolder); //Compact heapA into heapB
+                moveObjects(*vm.heapA, *vm.heapB); //Compact heapA into heapB
+                updatePtrHolder(*vm.heapA, ptrHolder); //Patch roots, free old heap
                 vm.heapAUsed = false;
             } else {
-                moveObjects(*vm.heapB, *vm.heapA, ptrHolder); //Compact heapB into heapA
+                moveObjects(*vm.heapB, *vm.heapA); //Compact heapB into heapA
+                updatePtrHolder(*vm.heapB, ptrHolder); //Patch roots, free old heap
                 vm.heapAUsed = true;
             }
     }
@@ -151,4 +161,4 @@ namespace sprout::heap {
     }
 
 
-}
+};
