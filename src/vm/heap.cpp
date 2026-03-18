@@ -131,7 +131,6 @@ namespace sprout::heap {
             void* raw = decode::decodePointer(*c);
             auto* hdr = static_cast<objHeader*>(raw) - 1;
             *c = decode::encodePointer(hdr->forwarded);
-
         }
         freeHeap(h);
     }

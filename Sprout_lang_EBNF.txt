@@ -1,0 +1,94 @@
+(* Top Level *)
+program         = { statement } ;
+
+statement       = import_stmt
+                | var_decl
+                | assignment
+                | func_decl
+                | if_stmt
+                | while_stmt
+                | for_stmt
+                | return_stmt
+                | expr_stmt ;
+
+(* Imports *)
+import_stmt     = "#import" lib_path ;
+lib_path        = identifier { "::" identifier } ;
+
+(* Variablen *)
+var_decl        = "var" identifier [ "->" type ] "=" expression ;
+assignment      = identifier "=" expression ;
+
+(* Typen *)
+type            = "int" | "double" | "boolean" | "string" | "char6" ;
+
+(* Arrays *)
+array_literal   = "[" [ expression { "," expression } ] "]" ;
+(* Typ wird entweder explizit via -> angegeben, oder vom Compiler aus Element 0 inferiert *)
+
+(* Funktionen *)
+func_decl       = "func" identifier [ "->" type ] "(" [ param_list ] ")" ":" block ;
+param_list      = param { "," param } ;
+param           = type identifier ;
+
+return_stmt     = "return" expression ;
+
+(* Kontrollfluss *)
+if_stmt         = "if" "(" expression ")" ":" block
+                  { ";" "else if" "(" expression ")" ":" block }
+                  [ ";" "else" ":" block ] ";" ;
+
+while_stmt      = "while" "(" expression ")" ":" block ";" ;
+
+for_stmt        = "for" "(" identifier "in" expression ")" ":" block ";" ;
+
+block           = { statement } ;
+
+(* Expressions *)
+expression      = logical_expr ;
+
+logical_expr    = comparison { ("&&" | "||") comparison } ;
+
+comparison      = additive { ("==" | "!=" | "<" | ">" | "<=" | ">=") additive } ;
+
+additive        = multiplicative { ("+" | "-") multiplicative } ;
+
+multiplicative  = unary { ("*" | "/" | "%") unary } ;
+
+unary           = [ "!" | "-" ] primary ;
+
+primary         = literal
+                | array_literal
+                | func_call
+                | lib_access
+                | identifier
+                | "(" expression ")" ;
+
+(* Funktionsaufruf *)
+func_call       = identifier ":" arg_list
+                | identifier ;
+
+arg_list        = arg { "," arg } ;
+arg             = [ identifier "=" ] expression ;
+
+(* Library Zugriff *)
+lib_access      = identifier "::" identifier [ ":" arg_list ] ;
+
+(* Expr Statement - Funktionsaufrufe als standalone Statement *)
+expr_stmt       = ( func_call | lib_access ) ;
+
+(* Literale *)
+literal         = int_lit | double_lit | bool_lit | string_lit | interp_string | char6_lit ;
+
+int_lit         = digit { digit } ;
+double_lit      = digit { digit } "." digit { digit } ;
+bool_lit        = "true" | "false" ;
+string_lit      = '"' { char } '"' ;
+interp_string   = 'v"' { char | "{" identifier "}" } '"' ;
+char6_lit       = 'c"' char [ char [ char [ char [ char [ char ] ] ] ] ] '"' ;
+
+(* Basis *)
+identifier      = letter { letter | digit | "_" } ;
+letter          = "a".."z" | "A".."Z" ;
+digit           = "0".."9" ;
+char            = (* jedes Unicode-Zeichen außer '"' und Newline *) ;
