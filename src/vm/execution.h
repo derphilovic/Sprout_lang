@@ -187,8 +187,16 @@ namespace sprout::execution {
         target = vm.stack[point];
     }
 
-    inline void mov(vm::VM& vm, uint8_t dst, uint8_t src) {
-        vm.reg[dst] = vm.reg[src];
+    inline void mov(vm::VM& vm, uint8_t dst, uint8_t src, uint8_t flag) {
+        switch (flag) {
+            case 1:
+                vm.reg[dst] = *reinterpret_cast<uint64_t*>(vm.reg[src]); break;
+            case 2:
+                *reinterpret_cast<uint64_t*>(vm.reg[dst]) = vm.reg[src]; break;
+            case 3:
+                *reinterpret_cast<uint64_t*>(vm.reg[dst]) = *reinterpret_cast<uint64_t*>(vm.reg[src]); break;
+            default:vm.reg[dst] = vm.reg[src]; break;
+        }
     }
 
 }
