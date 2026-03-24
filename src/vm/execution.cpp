@@ -1,7 +1,6 @@
 #include "execution.h"
-
 #include <format>
-
+#include <opcodes.h>
 #include "vm.h"
 #include "decode.h"
 #include "heap.h"

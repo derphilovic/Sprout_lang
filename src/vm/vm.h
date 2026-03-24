@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <vector>
-#include "bytecode.h"
+#include <bytecode_format.h>
 
 namespace sprout::heap {
     struct HEAP;
@@ -16,7 +16,7 @@ namespace sprout::vm {
     };
 
     struct VM {
-        bytecode::BCHeader header;
+        BCHeader header;
         uint64_t reg[256];
         std::vector<uint8_t> bytecode;
         std::size_t ip;

@@ -1,10 +1,8 @@
 #include "bytecode.h"
-
 #include <cstring>
 #include <fstream>
 #include <vector>
 #include <filesystem>
-
 #include "vm.h"
 
 namespace sprout::bytecode {

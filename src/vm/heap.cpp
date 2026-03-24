@@ -1,14 +1,14 @@
 #include "heap.h"
 #include <cstdlib>
-
+#include <values.h>
 #include "decode.h"
 #include "vm.h"
 
 namespace sprout::heap {
 
     inline bool markObject(uint64_t& r) {
-        if (decode::isPointer(r)) {
-            auto* hdr = static_cast<objHeader*>(decode::decodePointer(r)) - 1; // step back to header
+        if (isPointer(r)) {
+            auto* hdr = static_cast<objHeader*>(decodePointer(r)) - 1; // step back to header
             hdr->flags |= FLAG_MARKED;
             return true;
         }
@@ -95,7 +95,7 @@ namespace sprout::heap {
         for (auto object : objects) {
             if (object->type == OBJ_ARRAY) {
                 auto* array = reinterpret_cast<arrayObj *>(object);
-                if (array->type == decode::TAG_POINTER) {
+                if (array->type == TAG_POINTER) {
                     auto* data = reinterpret_cast<uint64_t*>(
                         reinterpret_cast<uint8_t*>(array) + sizeof(arrayObj));
                     for (uint32_t i = 0; i < array->length; i++) {
@@ -128,9 +128,9 @@ namespace sprout::heap {
 
     void updatePtrHolder(HEAP& h, std::vector<uint64_t*>& ptrHolder) {
         for (auto& c : ptrHolder) {
-            void* raw = decode::decodePointer(*c);
+            void* raw = decodePointer(*c);
             auto* hdr = static_cast<objHeader*>(raw) - 1;
-            *c = decode::encodePointer(hdr->forwarded);
+            *c = encodePointer(hdr->forwarded);
         }
         freeHeap(h);
     }
@@ -156,7 +156,7 @@ namespace sprout::heap {
         ptr->type = vm.reg[type];
         std::memset(ptr + sizeof(arrayObj), 0, ptr->length * sizeof(uint64_t));
 
-        vm.reg[dst] = decode::encodePointer(reinterpret_cast<uint64_t>(ptr));
+        vm.reg[dst] = encodePointer(reinterpret_cast<uint64_t>(ptr));
     }
 
 

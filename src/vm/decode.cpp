@@ -1,5 +1,4 @@
 #include "decode.h"
-
 #include "vm.h"
 
 namespace  sprout::decode {
