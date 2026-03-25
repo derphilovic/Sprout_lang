@@ -60,13 +60,4 @@ namespace sprout::bytecode {
         return subHeader;
     }
 
-    std::vector<vm::functionInfo> loadFunctionTable(BCHeader header, vm::VM& vm) {
-        std::vector<vm::functionInfo> f;
-         uint32_t addr = sizeof(BCHeader);
-        for (uint32_t i = 0; i < header.functionCount; ++i) {
-            f.push_back(vm::fetchFuncMetadata(vm, addr));
-            addr += sizeof(vm::functionInfo);
-        }
-        return f;
-    }
 }
