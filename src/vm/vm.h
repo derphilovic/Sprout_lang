@@ -32,7 +32,7 @@ namespace sprout::vm {
 
         bool running;
         bool heapAUsed;
-        std::vector<functionInfo> functionTable;
+        functionInfo functionTable[];
     };
 
     inline uint32_t fetch(VM& vm) {

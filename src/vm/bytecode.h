@@ -18,6 +18,8 @@ namespace sprout::bytecode {
 
     std::vector<uint8_t> loadBytecode(const char* path);
 
+    void loadFunctionTable(BCHeader header, vm::VM& vm);
+
     BCHeader loadHeader(const std::vector<uint8_t>& bytecode);
 
 }

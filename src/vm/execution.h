@@ -135,8 +135,7 @@ namespace sprout::execution {
 
     inline void call(vm::VM& vm, uint8_t a, uint8_t b, uint8_t c) {
         uint32_t index  = (static_cast<uint32_t>(a) << 16) | (static_cast<uint32_t>(b) << 8) | static_cast<uint32_t>(c); // Get index of Function
-        //vm::functionInfo f = vm.functionTable.at(index); // Getting function Metadata
-        auto f = vm::fetchFuncMetadata(vm, vm.header.functionOffset + index * 8);
+        vm::functionInfo f = vm.functionTable[index]; // Getting function Metadata
         decode::push(vm, vm.fp); // Push FP
         decode::push(vm, vm.ip); // Push IP
         vm.fp = vm.sp; // Set new FP

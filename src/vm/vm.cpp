@@ -10,6 +10,7 @@ namespace sprout::vm {
     void init(VM& vm, const char* path) {
         vm.bytecode = bytecode::loadBytecode(path);
         vm.header = bytecode::loadHeader(vm.bytecode);
+        bytecode::loadFunctionTable(vm.header, vm);
         vm.ip = vm.header.codeOffset;
         vm.heapAUsed = true;
         vm.heapA = new heap::HEAP();
