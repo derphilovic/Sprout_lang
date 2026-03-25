@@ -5,6 +5,8 @@
 #include <vector>
 #include <bytecode_format.h>
 
+constexpr uint16_t FUNCTION_TABLE_SIZE = 1024;
+
 namespace sprout::heap {
     struct HEAP;
 }
@@ -32,7 +34,7 @@ namespace sprout::vm {
 
         bool running;
         bool heapAUsed;
-        functionInfo functionTable[];
+        functionInfo functionTable[FUNCTION_TABLE_SIZE];
     };
 
     inline uint32_t fetch(VM& vm) {
