@@ -108,7 +108,13 @@ namespace sprout::execution {
             else if (da < db) vm.jmpFlag = -1;
             else if (da > db) vm.jmpFlag = 2;
             else vm.jmpFlag = 0;
-        } else {
+        } else if (isBool(a) && isBool(b)) {
+            bool da = decodeBool(a);
+            bool db = decodeBool(b);
+
+            if (da == db) vm.jmpFlag = 1;
+            else vm.jmpFlag = 0;
+            } else {
             throw std::runtime_error("Invalid Operand types");
         }
     }

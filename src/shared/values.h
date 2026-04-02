@@ -30,6 +30,14 @@ inline bool isPointer(uint64_t v) {
     return !isDouble(v) && getTag(v) == TAG_POINTER;
 }
 
+inline bool isBool(uint64_t v) {
+    return !isDouble(v) && getTag(v) == TAG_BOOL;
+}
+
+inline bool isChar6(uint64_t v) {
+    return !isDouble(v) && getTag(v) == TAG_CHAR6;
+}
+
 inline double decodeDouble(uint64_t reg) {
     double d;
     std::memcpy(&d, &reg, sizeof(double));
@@ -58,4 +66,12 @@ inline uint64_t encodePointer(uint64_t v) {
 
 inline void* decodePointer(uint64_t r) {
     return reinterpret_cast<void*>(r & 0x0000FFFFFFFFFFFFULL);
+}
+
+inline uint64_t encodeBool(bool b) {
+    return NAN_BASE | (uint64_t(TAG_BOOL) << 48) | (b ? 1 : 0);
+}
+
+inline bool decodeBool(uint64_t r) {
+    return r & 1;
 }
