@@ -1,0 +1,4 @@
+#ifndef SPROUT_LANG_LEXER_H
+#define SPROUT_LANG_LEXER_H
+
+#endif //SPROUT_LANG_LEXER_H

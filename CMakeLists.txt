@@ -16,5 +16,10 @@ add_executable(Sprout_lang
 )
 
 target_compile_options(Sprout_lang PRIVATE -O2)
-
 target_link_libraries(Sprout_lang PRIVATE sprout_shared)
+
+add_executable(sprout_compiler
+        src/compiler/lexer.cpp
+)
+
+target_link_libraries(sprout_compiler PRIVATE sprout_shared)

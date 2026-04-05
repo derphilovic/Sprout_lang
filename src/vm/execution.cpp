@@ -59,6 +59,15 @@ namespace sprout::execution {
             case OP_READ_FROM_STACK:
                 readFromStack(vm, d.ra, d.rb, vm.reg[d.rc]);
                 break;
+            case OP_ARR_INIT:
+                arrInit(vm, d.ra, d.rb, d.rc);
+                break;
+            case OP_ARR_INSERT:
+                arrAccess(vm, d.ra, d.rb, d.rc, 0);
+                break;
+            case OP_ARR_READ:
+                arrAccess(vm, d.ra, d.rb, d.rc, 1);
+                break;
             case OP_END:
                 end( vm.reg[d.ra]);
                 vm.running = false;

@@ -1,7 +1,9 @@
 #include "heap.h"
 #include <cstdlib>
+#include <format>
 #include <values.h>
 #include "decode.h"
+#include "execution.h"
 #include "vm.h"
 
 namespace sprout::heap {
@@ -159,5 +161,15 @@ namespace sprout::heap {
         vm.reg[dst] = encodePointer(reinterpret_cast<uint64_t>(ptr));
     }
 
+    void moveArray(vm::VM& vm,  uint8_t target, uint8_t address, uint8_t index, uint8_t flag) {
+        auto* base = reinterpret_cast<uint8_t*>(decodePointer(vm.reg[address]));
+        int64_t idx = decodeINT(vm.reg[index]);
+        auto* element = reinterpret_cast<uint64_t*>(base + sizeof(arrayObj) + idx * sizeof(uint64_t));
+
+        if (reinterpret_cast<arrayObj*>(base)->length < idx) throw std::runtime_error(std::format("Array out of bounds, index {:02X} is not valid!", idx));
+
+        if (flag == 0) *element = vm.reg[target];  //Move value into array
+        if (flag == 1) vm.reg[target] = *element;  //Move value into reg
+    }
 
 };

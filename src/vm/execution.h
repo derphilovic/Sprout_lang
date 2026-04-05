@@ -7,6 +7,8 @@
 #include "vm.h"
 #include <values.h>
 
+#include "heap.h"
+
 
 namespace sprout::execution {
     void execute(vm::VM& vm, const decode::decodedInstr& d);
@@ -182,6 +184,14 @@ namespace sprout::execution {
                 *reinterpret_cast<uint64_t*>(vm.reg[dst]) = *reinterpret_cast<uint64_t*>(vm.reg[src]); break;
             default:vm.reg[dst] = vm.reg[src]; break;
         }
+    }
+
+    inline void arrInit(vm::VM& vm, uint8_t dst, uint8_t len, uint8_t type) {
+        heap::initArray(vm, dst, len, type);
+    }
+
+    inline void arrAccess(vm::VM& vm, uint8_t target, uint8_t array, uint8_t index, uint8_t flag) {
+        heap::moveArray(vm, target, array, index, flag);
     }
 
 }

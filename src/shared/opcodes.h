@@ -22,4 +22,6 @@ enum Opcode : uint8_t {
     OP_READ_FROM_STACK,
     OP_MOV, //18
     OP_ARR_INIT,
+    OP_ARR_INSERT,
+    OP_ARR_READ,
 };
