@@ -24,4 +24,5 @@ enum Opcode : uint8_t {
     OP_ARR_INIT,
     OP_ARR_INSERT,
     OP_ARR_READ,
+
 };

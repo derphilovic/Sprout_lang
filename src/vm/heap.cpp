@@ -152,12 +152,12 @@ namespace sprout::heap {
     }
 
     void initArray(vm::VM& vm, uint8_t dst, uint8_t len, uint8_t type) {
-        HEAP*& h = vm.heapAUsed ? vm.heapA : vm.heapB;
-        auto* ptr = static_cast<arrayObj*>(gcCollectedHeapAlloc(vm.reg[len] + (sizeof(uint32_t) * 2), OBJ_ARRAY, vm)) - 1;
-        ptr->length = vm.reg[len];
-        ptr->type = vm.reg[type];
-        std::memset(ptr + sizeof(arrayObj), 0, ptr->length * sizeof(uint64_t));
-
+        int64_t length = decodeINT(vm.reg[len]);
+        size_t dataSize = static_cast<size_t>(length) * sizeof(uint64_t) + sizeof(uint32_t) * 2;
+        auto* ptr = static_cast<arrayObj*>(gcCollectedHeapAlloc(dataSize, OBJ_ARRAY, vm)) - 1;
+        ptr->length = static_cast<uint32_t>(length);
+        ptr->type = static_cast<uint32_t>(decodeINT(vm.reg[type]));
+        std::memset(ptr + 1, 0, static_cast<size_t>(length) * sizeof(uint64_t));
         vm.reg[dst] = encodePointer(reinterpret_cast<uint64_t>(ptr));
     }
 

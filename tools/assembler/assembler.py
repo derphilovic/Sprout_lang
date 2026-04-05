@@ -30,7 +30,9 @@ Instructions
   push  rA
   pop   rDST
   mov   rDST, rSRC [, flag]  ; flag 0=reg, 1=load ptr, 2=store ptr, 3=ptr-to-ptr
-  arr   rDST, rLEN, rTYPE    ; ARR_INIT
+  arr     rDST, rLEN, rTYPE  ; ARR_INIT   — allocate heap array
+  arrins  rSRC, rARR, rIDX   ; ARR_INSERT — array[rIDX] = rSRC
+  arrread rDST, rARR, rIDX   ; ARR_READ   — rDST = array[rIDX]
   ins   rA, rB, rSRC         ; INSERT_INTO_STACK  stack[(rA<<8)|rB] = rSRC
   read  rA, rB, rDST         ; READ_FROM_STACK    rDST = stack[(rA<<8)|rB]
   end   rA
@@ -136,7 +138,9 @@ OPCODES = {
     'ins':    0x10,   # OP_INSERT_INTO_STACK
     'read':   0x11,   # OP_READ_FROM_STACK
     'mov':    0x12,   # OP_MOV
-    'arr':    0x13,   # OP_ARR_INIT
+    'arr':     0x13,  # OP_ARR_INIT
+    'arrins':  0x14,  # OP_ARR_INSERT
+    'arrread': 0x15,  # OP_ARR_READ
 }
 
 BRANCH_OPS = {'je', 'jne', 'jl', 'jg'}
@@ -309,6 +313,14 @@ class Assembler:
             rlen = parse_reg(toks[2])
             rtyp = parse_reg(toks[3])
             self._emit(pack_instr(op, dst, rlen, rtyp))
+
+        elif mnem in ('arrins', 'arrread'):
+            # arrins rSRC, rARR, rIDX  — store rSRC into array[rIDX]
+            # arrread rDST, rARR, rIDX — load array[rIDX] into rDST
+            ra_ = parse_reg(toks[1])
+            rb_ = parse_reg(toks[2])
+            rc_ = parse_reg(toks[3])
+            self._emit(pack_instr(op, ra_, rb_, rc_))
 
         elif mnem == 'ins':
             # ins rA, rB, rSRC  -> insertIntoStack(a, b, reg[rc])
