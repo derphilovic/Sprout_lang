@@ -2,7 +2,6 @@
 #include <cstdlib>
 #include <format>
 #include <values.h>
-#include "decode.h"
 #include "execution.h"
 #include "vm.h"
 
