@@ -227,10 +227,10 @@ The Sprout language grammar is defined in `Sprout_lang_EBNF.txt`. Key design poi
 | `OP_MOV` with pointer flags      | Done       |
 | Array allocation (`OP_ARR_INIT`) | Done       |
 | Python assembler                 | Done       |
-| Array access (`OP_ARR_GET`)      | In design  |
-| Boolean Implementation           | Not started |
+| Array access (`OP_ARR_GET`)      | Done  |
+| Boolean Implementation           | Done started |
 | Char6 Implementation             | Not started |
-| Lexer                            | Not started |
+| Lexer                            | Done started |
 | Compiler frontend                | Not started |
 | Module / import system           | In design  |
 | Standard library                 | Not started |
