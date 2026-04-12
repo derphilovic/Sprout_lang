@@ -10,16 +10,26 @@ namespace lexer {
 
     enum TokenType {
         //Keywords
-        VAR, INT, PRINT,
+        VAR, INT, FLOAT, BOOL, CHAR6,
+        PRINT,
+        IMPORT,
+        IF, ELSE, WHILE,
+        FUNC, RET,
 
         //Identifiers/Literals
         NUMBER, IDENT,
 
         //Symbols
         PLUS, MINUS, STAR, SLASH,
-        EQ,
-        COLON,
+        EQ, EQEQ, GREATER, LOWER, GREATER_EQ, LOWER_EQ, NOT_EQ,
+        COLON, COMMA,
+        DOUBLECOLON, // Is tok for ::
+        SEMICOLON,
+        L_PAREN, R_PAREN, //Are token for ( and )
+        L_SQR_BRKT, R_SQR_BRKT, //Are token for [ and ]
+        L_CURL_BRKT, R_CURL_BRKT, //Aree token for { and }
         ARR_RIGHT, // Is token for ->
+
         UNKNOWN,
 
         END_OF_FILE

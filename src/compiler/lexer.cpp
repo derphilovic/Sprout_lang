@@ -17,8 +17,16 @@ namespace lexer {
             while (isalnum(peek(s))) word += advance(s); //Getting the full word
 
             if (word == "int") return makeToken(INT, word);
+            if (word == "double") return makeToken(FLOAT, word);
+            if (word == "boolean") return makeToken(BOOL, word);
+            if (word == "char6") return makeToken(CHAR6, word);
             if (word == "var") return makeToken(VAR, word);
             if (word == "print") return makeToken(PRINT, word);
+            if (word == "if") return makeToken(IF, word);
+            if (word == "else") return makeToken(ELSE, word);
+            if (word == "while") return makeToken(WHILE, word);
+            if (word == "func") return makeToken(FUNC, word);
+            if (word == "return") return makeToken(RET, word);
             return makeToken(IDENT, word);;
         }
 
@@ -38,12 +46,63 @@ namespace lexer {
             return makeToken(MINUS, "-");
         }
 
+        if (c == '=') {
+            advance(s);
+            if (peek(s) == '=') {advance(s); return makeToken(EQEQ, "==");}
+            return makeToken(EQ, "=");
+        }
+
+        if (c == ':') {
+            advance(s);
+            if (peek(s) == ':') {advance(s); return makeToken(DOUBLECOLON, "::");}
+            return makeToken(COLON, ":");
+        }
+
+        if (c == '!') {
+            advance(s);
+            if (peek(s) == '=') {advance(s); return makeToken(NOT_EQ, "!=");}
+            return makeToken(UNKNOWN, std::string(1, c));
+        }
+
+        if (c == '<') {
+            advance(s);
+            if (peek(s) == '=') {advance(s); return makeToken(LOWER_EQ, "<=");}
+            return makeToken(LOWER, "<");
+        }
+
+        if (c == '>') {
+            advance(s);
+            if (peek(s) == '=') {advance(s); return makeToken(GREATER_EQ, ">=");}
+            return makeToken(GREATER, ">");
+        }
+
+        if (c == '#') { //Handles all # compiler actions like Import
+            advance(s);
+            std::string word;
+            TokenType type;
+            std::string value;
+
+            while (isalpha(peek(s))) word += advance(s);
+            if (word == "import") type = IMPORT;
+
+            skipWhiteSpace(s);
+            while (isalpha(peek(s))) value += advance(s);
+
+            return makeToken(type, value);
+        }
+
         switch (advance(s)) {
             case '+': return makeToken(PLUS, "+");
             case '*': return makeToken(STAR, "*");
             case '/': return makeToken(SLASH, "/");
-            case '=': return makeToken(EQ, "=");
-            case ':': return makeToken(COLON, ":");
+            case ',': return makeToken(COMMA, ",");
+            case '(': return makeToken(L_PAREN, "(");
+            case ')': return makeToken(R_PAREN, ")");
+            case ';': return makeToken(SEMICOLON, ";");
+            case '[': return makeToken(R_SQR_BRKT, "[");
+            case ']': return makeToken(L_SQR_BRKT, "]");
+            case '{': return makeToken(R_CURL_BRKT, "{");
+            case '}': return makeToken(L_CURL_BRKT, "}");
         }
 
         return makeToken(UNKNOWN, std::string(1, c));
@@ -61,7 +120,7 @@ namespace lexer {
 }
 
 void run() {
-        std::string code = "var a -> int = 21\n var b = a * 5\n print : b\0";
+        std::string code = "#import time\n var date = [time::date, time::time]\nvar a -> int = 21\n var b = a * 5\n print : b\0";
         lexer::Source s = {code};
 
         std::vector<lexer::Token> tokens = lexer::tokenize(s);

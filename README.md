@@ -38,12 +38,15 @@ Sprout_lang/
 │   │   ├── bytecode_format.h   # BCHeader definition, magic number, version
 │   │   ├── opcodes.h           # Opcode enum
 │   │   └── values.h            # NaN-boxing encode/decode functions
-│   └── vm/
-│       ├── vm.h / vm.cpp       # VM struct, init, run loop
-│       ├── decode.h / .cpp     # Instruction decode, push/pop
-│       ├── execution.h / .cpp  # Opcode implementations
-│       ├── bytecode.h / .cpp   # Binary loader, header parser, function table
-│       └── heap.h / .cpp       # Arena allocator, two-space GC
+│   ├── vm/
+│   │   ├── vm.h / vm.cpp       # VM struct, init, run loop
+│   │   ├── decode.h / .cpp     # Instruction decode, push/pop
+│   │   ├── execution.h / .cpp  # Opcode implementations
+│   │   ├── bytecode.h / .cpp   # Binary loader, header parser, function table
+│   │   └── heap.h / .cpp       # Arena allocator, two-space GC
+│   └── compiler/
+│       ├── lexer.h / lexer.cpp # Tokeniser: source text → token stream
+│       └── compiler.h / .cpp   # Compiler frontend (in progress)
 ├── tools/
 │   └── assembler/
 │       └── assembler.py        # Python assembler: .spt → .spbt
@@ -109,6 +112,8 @@ All multi-byte values are **big-endian**.
 | `read` | 0x11 | ra, rb, rc | `rc = stack[(ra<<8)\|rb]` |
 | `mov` | 0x12 | dst, src, flag | Register copy or pointer load/store (see flags below) |
 | `arr` | 0x13 | dst, rlen, rtype | Allocate array of `rlen` elements of `rtype` |
+| `arrins` | 0x14 | rSRC, rARR, rIDX | `array[rIDX] = rSRC` (array element write) |
+| `arrread` | 0x15 | rDST, rARR, rIDX | `rDST = array[rIDX]` (array element read) |
 
 **`mov` flags:**
 
@@ -195,8 +200,12 @@ python assembler.py input.spt -o output.spbt
 ```bash
 cmake -B build
 cmake --build build
-./build/Sprout_lang program.spbt
 ```
+
+This produces two executables:
+
+- `./build/Sprout_lang program.spbt` — run a compiled `.spbt` bytecode file
+- `./build/sprout_compiler` — compiler frontend (in progress)
 
 ---
 
@@ -216,21 +225,21 @@ The Sprout language grammar is defined in `Sprout_lang_EBNF.txt`. Key design poi
 
 ## Status
 
-| Component                        | Status     |
-|----------------------------------|------------|
-| Fetch/decode/execute loop        | Done       |
-| NaN-boxing value system          | Done       |
-| Arena allocator                  | Done       |
-| Two-space compacting GC          | Done       |
-| Call/return convention           | Done       |
-| Function table loader            | Done       |
-| `OP_MOV` with pointer flags      | Done       |
-| Array allocation (`OP_ARR_INIT`) | Done       |
-| Python assembler                 | Done       |
-| Array access (`OP_ARR_GET`)      | In design  |
-| Boolean Implementation           | Not started |
-| Char6 Implementation             | Not started |
-| Lexer                            | Not started |
-| Compiler frontend                | Not started |
-| Module / import system           | In design  |
-| Standard library                 | Not started |
+| Component                                       | Status      |
+|-------------------------------------------------|-------------|
+| Fetch/decode/execute loop                       | Done        |
+| NaN-boxing value system                         | Done        |
+| Arena allocator                                 | Done        |
+| Two-space compacting GC                         | Done        |
+| Call/return convention                          | Done        |
+| Function table loader                           | Done        |
+| `OP_MOV` with pointer flags                     | Done        |
+| Array allocation (`OP_ARR_INIT`)                | Done        |
+| Array element read/write (`arrins` / `arrread`) | Done        |
+| Python assembler                                | Done        |
+| Lexer                                           | In progress |
+| Compiler frontend                               | In progress |
+| Boolean implementation                          | Done        |
+| Char6 implementation                            | Not started |
+| Module / import system                          | In design   |
+| Standard library                                | Not started |
