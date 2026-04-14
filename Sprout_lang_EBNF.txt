@@ -1,8 +1,8 @@
 (* Top Level *)
-program         = { statement } ;
+program         = { preprocessor | statement } ;
 
-statement       = import_stmt
-                | var_decl
+statement       = var_decl
+                | array_decl
                 | assignment
                 | func_decl
                 | if_stmt
@@ -11,12 +11,14 @@ statement       = import_stmt
                 | return_stmt
                 | expr_stmt ;
 
-(* Imports *)
-import_stmt     = "#import" lib_path ;
+(*preprocessor*)
+preprocessor    = "#" identifier { identifier | lib_path } ;
+
 lib_path        = identifier { "::" identifier } ;
 
 (* Variablen *)
 var_decl        = "var" identifier [ "->" type ] "=" expression ;
+array_decl      = "array" identifier [ "->" type ] "=" array_literal ;
 assignment      = identifier "=" expression ;
 
 (* Typen *)
@@ -88,7 +90,7 @@ interp_string   = 'v"' { char | "{" identifier "}" } '"' ;
 char6_lit       = 'c"' char [ char [ char [ char [ char [ char ] ] ] ] ] '"' ;
 
 (* Basis *)
-identifier      = letter { letter | digit | "_" } ;
+identifier      = letter { letter | digit } ;
 letter          = "a".."z" | "A".."Z" ;
 digit           = "0".."9" ;
 char            = (* jedes Unicode-Zeichen außer '"' und Newline *) ;
