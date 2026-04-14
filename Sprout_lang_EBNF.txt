@@ -29,22 +29,22 @@ array_literal   = "[" [ expression { "," expression } ] "]" ;
 (* Typ wird entweder explizit via -> angegeben, oder vom Compiler aus Element 0 inferiert *)
 
 (* Funktionen *)
-func_decl       = "func" identifier [ "->" type ] "(" [ param_list ] ")" ":" block ;
+func_decl       = "func" identifier [ "->" type ] "(" [ param_list ] ")" "{" block "}" ;
 param_list      = param { "," param } ;
 param           = type identifier ;
 
 return_stmt     = "return" expression ;
 
 (* Kontrollfluss *)
-if_stmt         = "if" "(" expression ")" ":" block
-                  { ";" "else if" "(" expression ")" ":" block }
-                  [ ";" "else" ":" block ] ";" ;
+if_stmt         = "if" "(" expression ")" "{" block
+                  { "}" "else if" "(" expression ")" "{" block }
+                  [ "}" "else" "{" block ] "}" ;
 
-while_stmt      = "while" "(" expression ")" ":" block ";" ;
+while_stmt      = "while" "(" expression ")" "{" block "}" ;
 
-for_stmt        = "for" "(" identifier "in" expression ")" ":" block ";" ;
+for_stmt        = "for" "(" identifier "in" expression ")" "{" block "}" ;
 
-block           = { statement } ;
+block           = { preprocessor | statement } ;
 
 (* Expressions *)
 expression      = logical_expr ;
