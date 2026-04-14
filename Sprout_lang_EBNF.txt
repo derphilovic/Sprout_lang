@@ -44,7 +44,7 @@ while_stmt      = "while" "(" expression ")" "{" block "}" ;
 
 for_stmt        = "for" "(" identifier "in" expression ")" "{" block "}" ;
 
-block           = { preprocessor | statement } ;
+block           = { statement } ;
 
 (* Expressions *)
 expression      = logical_expr ;
@@ -67,8 +67,7 @@ primary         = literal
                 | "(" expression ")" ;
 
 (* Funktionsaufruf *)
-func_call       = identifier ":" arg_list
-                | identifier ;
+func_call       = identifier ":" arg_list ;
 
 arg_list        = arg { "," arg } ;
 arg             = [ identifier "=" ] expression ;
