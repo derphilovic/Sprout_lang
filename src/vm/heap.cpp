@@ -151,18 +151,18 @@ namespace sprout::heap {
     }
 
     void initArray(vm::VM& vm, uint8_t dst, uint8_t len, uint8_t type) {
-        int64_t length = decodeINT(vm.reg[len]);
+        int64_t length = decodeInt(vm.reg[len]);
         size_t dataSize = static_cast<size_t>(length) * sizeof(uint64_t) + sizeof(uint32_t) * 2;
         auto* ptr = static_cast<arrayObj*>(gcCollectedHeapAlloc(dataSize, OBJ_ARRAY, vm)) - 1;
         ptr->length = static_cast<uint32_t>(length);
-        ptr->type = static_cast<uint32_t>(decodeINT(vm.reg[type]));
+        ptr->type = static_cast<uint32_t>(decodeInt(vm.reg[type]));
         std::memset(ptr + 1, 0, static_cast<size_t>(length) * sizeof(uint64_t));
         vm.reg[dst] = encodePointer(reinterpret_cast<uint64_t>(ptr));
     }
 
     void moveArray(vm::VM& vm,  uint8_t target, uint8_t address, uint8_t index, uint8_t flag) {
         auto* base = reinterpret_cast<uint8_t*>(decodePointer(vm.reg[address]));
-        int64_t idx = decodeINT(vm.reg[index]);
+        int64_t idx = decodeInt(vm.reg[index]);
         auto* element = reinterpret_cast<uint64_t*>(base + sizeof(arrayObj) + idx * sizeof(uint64_t));
 
         if (reinterpret_cast<arrayObj*>(base)->length < idx) throw std::runtime_error(std::format("Array out of bounds, index {:02X} is not valid!", idx));

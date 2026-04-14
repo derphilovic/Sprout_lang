@@ -3,6 +3,7 @@
 #include <cstring>
 
 constexpr uint64_t NAN_BASE = 0x7FF0000000000000ULL;
+constexpr uint64_t NAN_PAYLOAD = 0x0000FFFFFFFFFFFFULL;
 
 enum tag : uint64_t {
     TAG_DOUBLE,
@@ -13,9 +14,13 @@ enum tag : uint64_t {
     TAG_NULL
 };
 
+struct char6 {
+    char a, b, c, d, e, f;
+};
+
 inline bool isDouble(uint64_t v) {
     // If all exponent bits (62-52) are set, it's a NaN → not a plain double
-    return (v & 0x7FF0000000000000ULL) != 0x7FF0000000000000ULL;
+    return (v & NAN_BASE) != NAN_BASE;
 }
 
 inline uint8_t getTag(uint64_t v) {
@@ -50,22 +55,22 @@ inline uint64_t encodeDouble(double d) {
     return i;
 }
 
-inline uint64_t encodeINT(uint64_t reg) {
-    return NAN_BASE | (uint64_t(TAG_INT48) << 48) | ( reg & 0x0000FFFFFFFFFFFFULL);
+inline uint64_t encodeInt(uint64_t reg) {
+    return NAN_BASE | (uint64_t(TAG_INT48) << 48) | ( reg & NAN_PAYLOAD);
 }
 
-inline int64_t decodeINT(uint64_t num) {
-    int64_t enc = num & 0x0000FFFFFFFFFFFFULL;
+inline int64_t decodeInt(uint64_t num) {
+    int64_t enc = num & NAN_PAYLOAD;
     if (enc & (1LL << 47)) enc |= 0xFFFF000000000000ULL;
     return enc;
 }
 
 inline uint64_t encodePointer(uint64_t v) {
-    return NAN_BASE | (uint64_t(TAG_POINTER) << 48) | (v & 0x0000FFFFFFFFFFFFULL);
+    return NAN_BASE | (uint64_t(TAG_POINTER) << 48) | (v & NAN_PAYLOAD);
 }
 
 inline void* decodePointer(uint64_t r) {
-    return reinterpret_cast<void*>(r & 0x0000FFFFFFFFFFFFULL);
+    return reinterpret_cast<void*>(r & NAN_PAYLOAD);
 }
 
 inline uint64_t encodeBool(bool b) {
@@ -74,4 +79,17 @@ inline uint64_t encodeBool(bool b) {
 
 inline bool decodeBool(uint64_t r) {
     return r & 1;
+}
+
+inline uint64_t encodeChar6(char6 c) {
+    uint64_t value = 0;
+    std::memcpy(&value, &c, 6);
+    return NAN_BASE | (uint64_t(TAG_CHAR6) << 48) | (value & NAN_PAYLOAD) ;
+}
+
+inline char6 decodeChar6(uint64_t r) {
+    uint64_t v = r & NAN_PAYLOAD;
+    char6 c;
+    std::memcpy(&c, &v, 6);
+    return c;
 }

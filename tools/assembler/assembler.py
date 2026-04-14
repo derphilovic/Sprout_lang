@@ -96,12 +96,25 @@ def encode_null() -> int:
     return NAN_BASE | (TAG_NULL << 48)
 
 
+def encode_char6(s: str) -> int:
+    """Pack a string of up to 6 chars into a NaN-boxed CHAR6 word (little-endian layout)."""
+    if len(s) > 6:
+        raise ValueError(f"char6 literal too long ({len(s)} chars, max 6): {s!r}")
+    raw = s.encode('ascii').ljust(6, b'\x00')
+    value = int.from_bytes(raw[:6], 'little')
+    return NAN_BASE | (TAG_CHAR6 << 48) | (value & 0x0000_FFFF_FFFF_FFFF)
+
+
 def encode_value(token: str) -> int:
     """Try to encode a literal value token into a 64-bit NaN-boxed word."""
     if token == 'null':
         return encode_null()
     if token in ('true', 'false'):
         return encode_bool(token == 'true')
+    # Quoted string → char6
+    if (token.startswith('"') and token.endswith('"')) or \
+       (token.startswith("'") and token.endswith("'")):
+        return encode_char6(token[1:-1])
     # Try integer first
     try:
         return encode_int48(int(token, 0))

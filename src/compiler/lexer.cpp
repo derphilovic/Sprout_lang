@@ -21,6 +21,7 @@ namespace lexer {
             if (word == "boolean") return makeToken(BOOL, word);
             if (word == "char6") return makeToken(CHAR6, word);
             if (word == "var") return makeToken(VAR, word);
+            if (word == "array") return makeToken(ARRAY, word);
             if (word == "print") return makeToken(PRINT, word);
             if (word == "if") return makeToken(IF, word);
             if (word == "else") return makeToken(ELSE, word);
@@ -120,7 +121,7 @@ namespace lexer {
 }
 
 void run() {
-        std::string code = "#import time\n var date = [time::date, time::time]\nvar a -> int = 21\n var b = a * 5\n print : b\0";
+        std::string code = "#import time\n array date = [time::date, time::time]\nvar a -> int = 21\n var b = a * 5\n print : b\0";
         lexer::Source s = {code};
 
         std::vector<lexer::Token> tokens = lexer::tokenize(s);

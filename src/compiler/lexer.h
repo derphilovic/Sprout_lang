@@ -10,7 +10,7 @@ namespace lexer {
 
     enum TokenType {
         //Keywords
-        VAR, INT, FLOAT, BOOL, CHAR6,
+        VAR, ARRAY, INT, FLOAT, BOOL, CHAR6,
         PRINT,
         IMPORT,
         IF, ELSE, WHILE,

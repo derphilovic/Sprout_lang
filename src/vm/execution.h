@@ -21,10 +21,10 @@ namespace sprout::execution {
             double res = da + db;
             dst = encodeDouble(res);
         }else if (isInt(a) && isInt(b)) {
-            int64_t da = decodeINT(a);
-            int64_t db = decodeINT(b);
+            int64_t da = decodeInt(a);
+            int64_t db = decodeInt(b);
             int64_t res = da + db;
-            dst = encodeINT(res);
+            dst = encodeInt(res);
         }else {
             throw std::runtime_error("Invalid Operand types!");
         }
@@ -37,10 +37,10 @@ namespace sprout::execution {
             double res = da - db;
             dst = encodeDouble(res);
         }else if (isInt(a) && isInt(b)) {
-            int64_t da = decodeINT(a);
-            int64_t db = decodeINT(b);
+            int64_t da = decodeInt(a);
+            int64_t db = decodeInt(b);
             int64_t res = da - db;
-            dst = encodeINT(res);
+            dst = encodeInt(res);
         }else {
             throw std::runtime_error("Invalid Operand types!");
         }
@@ -53,10 +53,10 @@ namespace sprout::execution {
             double res = da * db;
             dst = encodeDouble(res);
         }else if (isInt(a) && isInt(b)) {
-            int64_t da = decodeINT(a);
-            int64_t db = decodeINT(b);
+            int64_t da = decodeInt(a);
+            int64_t db = decodeInt(b);
             int64_t res = da * db;
-            dst = encodeINT(res);
+            dst = encodeInt(res);
         }else {
             throw std::runtime_error("Invalid Operand types!");
         }
@@ -69,10 +69,10 @@ namespace sprout::execution {
             double res = da / db;
             dst = encodeDouble(res);
         }else if (isInt(a) && isInt(b)) {
-            int64_t da = decodeINT(a);
-            int64_t db = decodeINT(b);
+            int64_t da = decodeInt(a);
+            int64_t db = decodeInt(b);
             int64_t res = da / db;
-            dst = encodeINT(res);
+            dst = encodeInt(res);
         }else {
             throw std::runtime_error("Invalid Operand types!");
         }
@@ -85,11 +85,14 @@ namespace sprout::execution {
 
     inline void end(uint64_t ret) {
         if (isInt(ret)) {
-            int64_t r = decodeINT(ret);
+            int64_t r = decodeInt(ret);
             std::cout << r << std::endl;
         } else if (isDouble(ret)) {
             double r = decodeDouble(ret);
             std::cout << r << std::endl;
+        } else if (isChar6(ret)) {
+            char6 r = decodeChar6(ret);
+            std::cout << r.a << r.b << r.c << r.d << r.e << r.f << std::endl;
         }
     }
 
@@ -103,8 +106,8 @@ namespace sprout::execution {
             else if (da > db) vm.jmpFlag = 2;
             else vm.jmpFlag = 0;
         } else if (isInt(a) && isInt(b)) {
-            int64_t da = decodeINT(a);
-            int64_t db = decodeINT(b);
+            int64_t da = decodeInt(a);
+            int64_t db = decodeInt(b);
 
             if (da == db) vm.jmpFlag = 1;
             else if (da < db) vm.jmpFlag = -1;
