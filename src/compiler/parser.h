@@ -10,36 +10,34 @@ namespace sprout::parser {
         uint64_t pos = 0;
     };
 
-    inline lexer::Token peek(TokenSource s) {
+    inline lexer::Token peek(TokenSource& s) {
+        if (s.pos >= s.token.size()) return {lexer::END_OF_FILE, ""};
         return s.token[s.pos];
     }
 
-    inline lexer::Token advance(TokenSource s) {
+    inline lexer::Token advance(TokenSource& s) {
+        if (s.pos >= s.token.size()) return {lexer::END_OF_FILE, ""};
         lexer::Token tok = s.token[s.pos];
         s.pos++;
         return tok;
     }
 
-    inline lexer::Token expect(TokenSource s, lexer::TokenType expected) {
+    inline lexer::Token expect(TokenSource& s, lexer::TokenType expected) {
+        if (s.pos >= s.token.size()) throw std::runtime_error("Unexpected end of input");
         lexer::Token tok = s.token[s.pos];
         if (tok.type != expected) throw std::runtime_error("Other token expected!");
-
+        s.pos++;
         return tok;
     }
 
     enum NodeType {
-        ProgramNode,
-        VarDeclNode,
-        BinaryOpNode,
-        IdentNode,
-        IntLiteralNode,
-        DebugOutNode,
-    };
-
-    enum BinaryOpType {
-        ADDITION,
-        MULTIPLICATION,
-
+        NODE_PROGRAM,
+        NODE_VAR_DECL,
+        NODE_BINARY_OP,
+        NODE_UNARY_OP,
+        NODE_IDENT,
+        NODE_INT_LITERAL,
+        NODE_DEBUG_OUT,
     };
 
     struct ASTNode {
@@ -50,27 +48,52 @@ namespace sprout::parser {
         std::vector<ASTNode*> program;
     };
 
-    struct binaryOpNode : ASTNode {
-        BinaryOpType Operand;
+    struct BinaryOpNode : ASTNode {
+        lexer::TokenType op;
         ASTNode* left;
         ASTNode* right;
+    };
+
+    struct UnaryOpNode : ASTNode {
+        lexer::TokenType op;
+        ASTNode* operand;
     };
 
     struct IdentNode : ASTNode {
         std::string identifier;
     };
 
-    struct IntLiteralNode {
+    struct IntLiteralNode : ASTNode {
         int64_t number;
     };
 
     struct VarDeclNode : ASTNode {
-        ASTNode* identifier;
+        std::string identifier;
         ASTNode* expression;
     };
 
-    struct debugNode : ASTNode {
+    struct DebugNode : ASTNode {
         ASTNode* identifier;
     };
+
+    ASTNode* parseProgram(std::vector<lexer::Token>& tokens);
+
+    //======================
+    //      DEBUG FUNC
+    //======================
+    inline std::string tokenTypeName(lexer::TokenType t) {
+        switch (t) {
+            case lexer::PLUS:     return "+";
+            case lexer::MINUS:    return "-";
+            case lexer::STAR:     return "*";
+            case lexer::SLASH:    return "/";
+            case lexer::EQEQ:     return "==";
+            case lexer::NOT_EQ:   return "!=";
+            case lexer::LOWER:    return "<";
+            case lexer::GREATER:  return ">";
+            default:              return "?";
+        }
+    }
+    void printAST(ASTNode* node, int indent = 1);
 
 }

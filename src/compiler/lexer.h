@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace sprout::lexer {
     struct Source {
@@ -22,9 +23,10 @@ namespace sprout::lexer {
         //Symbols
         PLUS, MINUS, STAR, SLASH,
         EQ, EQEQ, GREATER, LOWER, GREATER_EQ, LOWER_EQ, NOT_EQ,
+        DOUBLE_AND, DOUBLE_VBAR,
         COLON, COMMA,
         DOUBLECOLON, // Is tok for ::
-        SEMICOLON,
+        SEMICOLON, NOT,
         L_PAREN, R_PAREN, //Are token for ( and )
         L_SQR_BRKT, R_SQR_BRKT, //Are token for [ and ]
         L_CURL_BRKT, R_CURL_BRKT, //Aree token for { and }
@@ -69,4 +71,4 @@ namespace sprout::lexer {
 
 
 }
-void run();
+std::vector<sprout::lexer::Token> run();

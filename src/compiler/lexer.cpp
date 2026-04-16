@@ -1,5 +1,4 @@
 #include "lexer.h"
-#include <vector>
 #include <string>
 #include <cstdint>
 #include <iostream>
@@ -62,6 +61,18 @@ namespace sprout::lexer {
         if (c == '!') {
             advance(s);
             if (peek(s) == '=') {advance(s); return makeToken(NOT_EQ, "!=");}
+            return makeToken(NOT, "!");
+        }
+
+        if (c == '&') {
+            advance(s);
+            if (peek(s) == '&') {advance(s); return makeToken(DOUBLE_AND, "&&");}
+            return makeToken(UNKNOWN, std::string(1, c));
+        }
+
+        if (c == '|') {
+            advance(s);
+            if (peek(s) == '|') {advance(s); return makeToken(DOUBLE_VBAR, "||");}
             return makeToken(UNKNOWN, std::string(1, c));
         }
 
@@ -100,10 +111,10 @@ namespace sprout::lexer {
             case '(': return makeToken(L_PAREN, "(");
             case ')': return makeToken(R_PAREN, ")");
             case ';': return makeToken(SEMICOLON, ";");
-            case '[': return makeToken(R_SQR_BRKT, "[");
-            case ']': return makeToken(L_SQR_BRKT, "]");
-            case '{': return makeToken(R_CURL_BRKT, "{");
-            case '}': return makeToken(L_CURL_BRKT, "}");
+            case '[': return makeToken(L_SQR_BRKT, "[");
+            case ']': return makeToken(R_SQR_BRKT, "]");
+            case '{': return makeToken(L_CURL_BRKT, "{");
+            case '}': return makeToken(R_CURL_BRKT, "}");
         }
 
         return makeToken(UNKNOWN, std::string(1, c));
@@ -120,12 +131,13 @@ namespace sprout::lexer {
     }
 }
 
-void run() {
-        std::string code = "#import time\n array date = [time::date, time::time]\nvar a -> int = 21\n var b = a * 5\n print : b\0";
+std::vector<sprout::lexer::Token> run() {
+        std::string code = "var apple = 6 * 3 + 2\0";
         sprout::lexer::Source s = {code};
 
-        std::vector<sprout::lexer::Token> tokens = tokenize(s);
+        std::vector<sprout::lexer::Token> tokens = sprout::lexer::tokenize(s);
         for (auto t : tokens) {
             std::cout << "Token Type: " << t.type << " Token Value: " << t.content << "\n";
         }
+        return tokens;
 }
