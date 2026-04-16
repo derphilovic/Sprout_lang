@@ -21,6 +21,8 @@ target_link_libraries(Sprout_lang PRIVATE sprout_shared)
 add_executable(sprout_compiler
         src/compiler/lexer.cpp
         src/compiler/compiler.cpp
+        src/compiler/parser.cpp
+        src/compiler/parser.h
 )
 
 target_link_libraries(sprout_compiler PRIVATE sprout_shared)

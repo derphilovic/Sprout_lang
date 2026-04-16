@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <iostream>
 
-namespace lexer {
+namespace sprout::lexer {
 
     Token nextToken(Source& s) {
         skipWhiteSpace(s);
@@ -122,9 +122,9 @@ namespace lexer {
 
 void run() {
         std::string code = "#import time\n array date = [time::date, time::time]\nvar a -> int = 21\n var b = a * 5\n print : b\0";
-        lexer::Source s = {code};
+        sprout::lexer::Source s = {code};
 
-        std::vector<lexer::Token> tokens = lexer::tokenize(s);
+        std::vector<sprout::lexer::Token> tokens = tokenize(s);
         for (auto t : tokens) {
             std::cout << "Token Type: " << t.type << " Token Value: " << t.content << "\n";
         }

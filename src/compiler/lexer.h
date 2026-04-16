@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <string>
 
-namespace lexer {
+namespace sprout::lexer {
     struct Source {
         std::string src;
         uint64_t pos = 0;
