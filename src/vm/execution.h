@@ -7,7 +7,7 @@
 #include "vm.h"
 #include <values.h>
 
-#include "heap.h"
+#include "Heap.h"
 
 
 namespace sprout::execution {

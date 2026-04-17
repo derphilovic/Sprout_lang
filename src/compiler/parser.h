@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include "lexer.h"
+#include "memManager.h"
 
 namespace sprout::parser {
     struct TokenSource {
@@ -76,7 +77,7 @@ namespace sprout::parser {
         ASTNode* identifier;
     };
 
-    ASTNode* parseProgram(std::vector<lexer::Token>& tokens);
+    ASTNode* parseProgram(std::vector<lexer::Token>& tokens, memManager::Memory& mem);
 
     //======================
     //      DEBUG FUNC

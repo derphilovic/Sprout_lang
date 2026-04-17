@@ -12,7 +12,7 @@ add_executable(Sprout_lang
         src/vm/decode.cpp
         src/vm/bytecode.cpp
         src/vm/execution.cpp
-        src/vm/heap.cpp
+        src/vm/Heap.cpp
 )
 
 target_compile_options(Sprout_lang PRIVATE -O2)
@@ -23,6 +23,8 @@ add_executable(sprout_compiler
         src/compiler/compiler.cpp
         src/compiler/parser.cpp
         src/compiler/parser.h
+        src/compiler/memManager.cpp
+        src/compiler/memManager.h
 )
 
 target_link_libraries(sprout_compiler PRIVATE sprout_shared)

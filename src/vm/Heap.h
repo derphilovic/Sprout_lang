@@ -36,22 +36,22 @@ namespace sprout::heap {
     uint32_t length;
     };
 
-    struct CHUNK {
+    struct Chunk {
         uint8_t* mem;
         size_t used;
         size_t capacity;
     };
 
-    struct HEAP {
-        std::vector<CHUNK> chunks;
+    struct Heap {
+        std::vector<Chunk> chunks;
         size_t totalAllocated;
         size_t max;
     };
 
 
     void compactingGarbageCollect(vm::VM& vm);
-    void freeHeap(HEAP& h);
-    void* heapAlloc (HEAP& h, size_t size, uint16_t type);
+    void freeHeap(Heap& h);
+    void* heapAlloc (Heap& h, size_t size, uint16_t type);
     void* gcCollectedHeapAlloc (size_t size, uint16_t type, vm::VM& vm);
     void initArray(vm::VM& vm, uint8_t dst, uint8_t len, uint8_t type);
     void moveArray(vm::VM& vm,  uint8_t target, uint8_t address, uint8_t index, uint8_t flag);

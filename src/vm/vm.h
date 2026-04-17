@@ -8,7 +8,7 @@
 constexpr uint16_t FUNCTION_TABLE_SIZE = 2048;
 
 namespace sprout::heap {
-    struct HEAP;
+    struct Heap;
 }
 
 namespace sprout::vm {
@@ -27,8 +27,8 @@ namespace sprout::vm {
         uint64_t sp;
         uint64_t fp;
 
-        heap::HEAP* heapA;
-        heap::HEAP* heapB;
+        heap::Heap* heapA;
+        heap::Heap* heapB;
 
         int8_t jmpFlag;
 

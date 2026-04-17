@@ -4,7 +4,9 @@
 
 int main() {
     std::vector<sprout::lexer::Token> tokens = run();
-    sprout::parser::ASTNode* tree = sprout::parser::parseProgram(tokens);
+    sprout::memManager::Memory mem {};
+    sprout::parser::ASTNode* tree = sprout::parser::parseProgram(tokens, mem);
     sprout::parser::printAST(tree, 1);
+    sprout::memManager::freeMemory(mem);
     return 0;
 }
