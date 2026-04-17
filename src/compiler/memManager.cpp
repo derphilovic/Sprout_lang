@@ -25,8 +25,8 @@ namespace sprout::memManager {
 
         void* ptr = (c.mem + c.used);
 
-        c.used += size;
-        mem.allocated += size;
+        c.used += total;
+        mem.allocated += total;
 
         return ptr;
     }

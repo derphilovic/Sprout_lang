@@ -61,7 +61,7 @@ namespace sprout::bytecode {
     }
 
     void loadFunctionTable(BCHeader header, vm::VM& vm) {
-         uint32_t addr = sizeof(BCHeader);
+         uint32_t addr = header.functionOffset;
         for (uint32_t i = 0; i < header.functionCount; ++i) {
             //f.push_back(vm::fetchFuncMetadata(vm, addr));
             vm.functionTable[i] = fetchFuncMetadata(vm, addr);

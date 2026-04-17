@@ -115,11 +115,11 @@ namespace sprout::heap {
                 auto* obj = reinterpret_cast<objHeader*>(c.mem + i);
 
                 if (obj->flags == FLAG_MARKED) {
-                    auto* newAddr = static_cast<objHeader*>(heapAlloc(h2, obj->size, obj->type)); //get a new * address for obj from heapAlloc
+                    auto* newAddr = static_cast<objHeader*>(heapAlloc(h2, obj->size - sizeof(objHeader), obj->type)); //get a new * address for obj from heapAlloc
 
                     std::memcpy(newAddr, obj + 1, obj->size - sizeof(objHeader)); //copy data from the old obj to the new obj
 
-                    obj->forwarded = reinterpret_cast<uint64_t>(newAddr);
+                    obj->forwarded = encodePointer(reinterpret_cast<uint64_t>(newAddr));
                 }
                 i += obj->size;
             }
@@ -130,7 +130,7 @@ namespace sprout::heap {
         for (auto& c : ptrHolder) {
             void* raw = decodePointer(*c);
             auto* hdr = static_cast<objHeader*>(raw) - 1;
-            *c = encodePointer(hdr->forwarded);
+            *c = hdr->forwarded;
         }
         freeHeap(h);
     }
