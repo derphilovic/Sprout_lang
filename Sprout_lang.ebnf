@@ -78,9 +78,9 @@ primary         = literal
 array_index     = identifier "[" expression "]" ;
 
 (* Funktionsaufruf *)
-(* Zero-arg calls require colon: foo:  With args: foo: a, b  or  foo: x=a, y=b *)
+(* Zero-arg calls require colon and semicolon: foo:;  With args: foo: a, b;  or  foo: x=a, y=b; *)
 (* Named and positional args must not be mixed in one call *)
-func_call       = identifier ":" [ arg_list ] ;
+func_call       = identifier ":" [ arg_list ] ";" ;
 
 arg_list        = named_arg_list
                 | positional_arg_list ;
