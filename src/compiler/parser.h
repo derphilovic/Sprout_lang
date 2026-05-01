@@ -34,6 +34,8 @@ namespace sprout::parser {
     enum NodeType {
         NODE_PROGRAM,
         NODE_VAR_DECL,
+        NODE_VAR_ASSIGN,
+        NODE_FUNC_CALL,
         NODE_BINARY_OP,
         NODE_UNARY_OP,
         NODE_IDENT,
@@ -71,6 +73,16 @@ namespace sprout::parser {
     struct VarDeclNode : ASTNode {
         std::string identifier;
         ASTNode* expression;
+    };
+
+    struct VarAssignNode : ASTNode {
+        std::string identifier;
+        ASTNode* expression;
+    };
+
+    struct FuncCallNode : ASTNode {
+        std::string identifier;
+        std::vector<ASTNode*> args;
     };
 
     struct DebugNode : ASTNode {

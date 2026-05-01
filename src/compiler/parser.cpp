@@ -14,6 +14,24 @@ namespace sprout::parser {
         }
         if (t.type == lexer::IDENT) {
             advance(s);
+
+            if (lexer::COLON == peek(s).type) {
+                advance(s);
+                std::vector<ASTNode*> args;
+
+                while (lexer::SEMICOLON != peek(s).type) {
+                    args.push_back(parseExpression(s, mem));
+                    if (peek(s).type == lexer::COMMA) {
+                        advance(s);
+                    } else if (peek(s).type != lexer::SEMICOLON) {
+                        throw std::runtime_error("Expected ',' or ';' in argument list, got: " + peek(s).content);
+                    }
+                }
+                advance(s);
+                auto ptr = memManager::allocateMemory(mem,sizeof(FuncCallNode));
+                return new(ptr) FuncCallNode{NODE_FUNC_CALL, t.content, args};
+            }
+
             auto ptr = memManager::allocateMemory(mem,sizeof(IdentNode));
             return new(ptr) IdentNode{NODE_IDENT, t.content};
         }
