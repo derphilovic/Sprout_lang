@@ -125,12 +125,48 @@ namespace sprout::parser {
         return new(ptr) VarDeclNode{NODE_VAR_DECL, name, expr};
     }
 
+    ASTNode* parseBlock(TokenSource& s, memManager::Memory& mem) {
+        expect(s, lexer::L_CURL_BRKT);
+        std::vector<ASTNode*> block;
+        while (peek(s).type != lexer::R_CURL_BRKT) {
+            if (peek(s).type == lexer::END_OF_FILE) {
+                throw std::runtime_error("Unexpected EOF inside block, expected '}'");
+            }
+            switch (peek(s).type) {
+                case lexer::VAR: block.push_back(parseVarDecl(s, mem)); break;
+                case lexer::L_CURL_BRKT: block.push_back(parseBlock(s, mem)); break;
+                default: advance(s); break;
+            }
+        }
+        expect(s, lexer::R_CURL_BRKT);
+        auto ptr = memManager::allocateMemory(mem, sizeof(BlockNode));
+        return new(ptr) BlockNode{NODE_BLOCK, block};
+    }
+
+
+    ASTNode* parseIfStmt(TokenSource& s, memManager::Memory& mem) {
+        expect(s, lexer::IF);
+        expect(s, lexer::L_PAREN);
+        ASTNode* expr = parseExpression(s, mem);
+        expect(s, lexer::R_PAREN);
+        ASTNode* ifBlock = parseBlock(s, mem);
+        ASTNode* elseBlock = nullptr;
+        if (peek(s).type == lexer::ELSE) {
+            expect(s, lexer::ELSE);
+            elseBlock = parseBlock(s, mem);
+        }
+        auto ptr = memManager::allocateMemory(mem,sizeof(IfStmtNode));
+        return new(ptr) IfStmtNode{NODE_IF_STMT, expr, ifBlock, elseBlock};
+    }
+
     ASTNode* parseProgram(std::vector<lexer::Token>& tokens, memManager::Memory& mem) {
         TokenSource s = {tokens, 0};
         std::vector<ASTNode*> program;
         while (s.pos < s.token.size()) {
             switch (s.token[s.pos].type) {
                 case lexer::VAR: program.push_back(parseVarDecl(s, mem)); break;
+                case lexer::L_CURL_BRKT: program.push_back(parseBlock(s, mem)); break;
+                case lexer::IF: program.push_back(parseIfStmt(s, mem)); break;
                 default: advance(s); break;
             }
         }
@@ -150,6 +186,13 @@ namespace sprout::parser {
                 auto* n = static_cast<ProgramNode*>(node);
                 std::cout << pad << "Program\n";
                 for (auto* child : n->program)
+                    printAST(child, indent + 1);
+                break;
+            }
+            case NODE_BLOCK: {
+                auto n = static_cast<BlockNode*>(node);
+                std::cout << pad << "Block\n";
+                for (auto* child : n->block)
                     printAST(child, indent + 1);
                 break;
             }
@@ -180,6 +223,19 @@ namespace sprout::parser {
             case NODE_IDENT: {
                 auto* n = static_cast<IdentNode*>(node);
                 std::cout << pad << "Ident(" << n->identifier << ")\n";
+                break;
+            }
+            case NODE_FUNC_CALL: {
+                auto* n = static_cast<FuncCallNode*>(node);
+                std::cout << pad << "FuncCall(" << n->identifier << ":" << ";)\n";
+                break;
+            }
+            case NODE_IF_STMT: {
+                auto* n = static_cast<IfStmtNode*>(node);
+                std::cout << pad << "If\n";
+                printAST(n->expression, indent + 1);
+                printAST(n->ifBlock, indent + 1);
+                if (n->elseBlock != nullptr) printAST(n->elseBlock, indent + 1);
                 break;
             }
             default:

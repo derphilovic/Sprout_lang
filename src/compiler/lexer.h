@@ -71,4 +71,4 @@ namespace sprout::lexer {
 
 
 }
-std::vector<sprout::lexer::Token> run();
+std::vector<sprout::lexer::Token> tokenize(std::string code);

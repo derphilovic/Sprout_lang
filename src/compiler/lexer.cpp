@@ -131,8 +131,7 @@ namespace sprout::lexer {
     }
 }
 
-std::vector<sprout::lexer::Token> run() {
-        std::string code = "var apple = 6 * 3 + 2\0";
+std::vector<sprout::lexer::Token> tokenize(std::string code) {
         sprout::lexer::Source s = {code};
 
         std::vector<sprout::lexer::Token> tokens = sprout::lexer::tokenize(s);

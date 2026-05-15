@@ -23,6 +23,7 @@ namespace sprout::parser {
         return tok;
     }
 
+    //Expect specified token, if wrong token error will be thrown, if correct behaves like advance();
     inline lexer::Token expect(TokenSource& s, lexer::TokenType expected) {
         if (s.pos >= s.token.size()) throw std::runtime_error("Unexpected end of input");
         lexer::Token tok = s.token[s.pos];
@@ -40,6 +41,8 @@ namespace sprout::parser {
         NODE_UNARY_OP,
         NODE_IDENT,
         NODE_INT_LITERAL,
+        NODE_IF_STMT,
+        NODE_BLOCK,
         NODE_DEBUG_OUT,
     };
 
@@ -49,6 +52,10 @@ namespace sprout::parser {
 
     struct ProgramNode : ASTNode {
         std::vector<ASTNode*> program;
+    };
+
+    struct BlockNode :ASTNode {
+        std::vector<ASTNode*> block;
     };
 
     struct BinaryOpNode : ASTNode {
@@ -83,6 +90,12 @@ namespace sprout::parser {
     struct FuncCallNode : ASTNode {
         std::string identifier;
         std::vector<ASTNode*> args;
+    };
+
+    struct IfStmtNode : ASTNode {
+        ASTNode* expression;
+        ASTNode* ifBlock;
+        ASTNode* elseBlock;
     };
 
     struct DebugNode : ASTNode {
