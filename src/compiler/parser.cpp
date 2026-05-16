@@ -33,6 +33,13 @@ namespace sprout::parser {
                 return new(ptr) FuncCallNode{NODE_FUNC_CALL, t.content, args};
             }
 
+            if (lexer::EQ == peek(s).type) {
+                expect(s, lexer::EQ);
+                ASTNode* expr = parseExpression(s, mem);
+                auto ptr = memManager::allocateMemory(mem,sizeof(VarAssignNode));
+                return new(ptr) VarAssignNode{NODE_VAR_ASSIGN, t.content, expr};
+            }
+
             auto ptr = memManager::allocateMemory(mem,sizeof(IdentNode));
             return new(ptr) IdentNode{NODE_IDENT, t.content};
         }
@@ -137,6 +144,7 @@ namespace sprout::parser {
                 case lexer::VAR: block.push_back(parseVarDecl(s, mem)); break;
                 case lexer::L_CURL_BRKT: block.push_back(parseBlock(s, mem)); break;
                 case lexer::IF: block.push_back(parseIfStmt(s, mem)); break;
+                case lexer::IDENT: block.push_back(parsePrimary(s, mem)); break;
                 default: advance(s); break;
             }
         }
@@ -169,6 +177,7 @@ namespace sprout::parser {
                 case lexer::VAR: program.push_back(parseVarDecl(s, mem)); break;
                 case lexer::L_CURL_BRKT: program.push_back(parseBlock(s, mem)); break;
                 case lexer::IF: program.push_back(parseIfStmt(s, mem)); break;
+                case lexer::IDENT: program.push_back(parsePrimary(s, mem)); break;
                 default: advance(s); break;
             }
         }
@@ -217,6 +226,12 @@ namespace sprout::parser {
                 printAST(n->expression, indent + 1);
                 break;
             }
+            case NODE_VAR_ASSIGN: {
+                auto* n = static_cast<VarAssignNode*>(node);
+                std::cout << pad << "VarAssign(" << n->identifier << ")\n";
+                printAST(n->expression, indent + 1);
+                break;
+            }
             case NODE_INT_LITERAL: {
                 auto* n = static_cast<IntLiteralNode*>(node);
                 std::cout << pad << "Int(" << n->number << ")\n";
@@ -229,7 +244,10 @@ namespace sprout::parser {
             }
             case NODE_FUNC_CALL: {
                 auto* n = static_cast<FuncCallNode*>(node);
-                std::cout << pad << "FuncCall(" << n->identifier << ":" << ";)\n";
+                std::cout << pad << "FuncCall(" << n->identifier << ")\n";
+                for (auto* value : n->args) {
+                    printAST(value, indent + 1);
+                }
                 break;
             }
             case NODE_IF_STMT: {
