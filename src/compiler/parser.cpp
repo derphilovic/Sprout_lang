@@ -3,6 +3,7 @@
 
 namespace sprout::parser {
     ASTNode* parseExpression(TokenSource & token_source, memManager::Memory& mem);
+    ASTNode* parseIfStmt(TokenSource& s, memManager::Memory& mem);
 
     ASTNode* parsePrimary(TokenSource& s, memManager::Memory& mem) {
         lexer::Token t = peek(s);
@@ -135,6 +136,7 @@ namespace sprout::parser {
             switch (peek(s).type) {
                 case lexer::VAR: block.push_back(parseVarDecl(s, mem)); break;
                 case lexer::L_CURL_BRKT: block.push_back(parseBlock(s, mem)); break;
+                case lexer::IF: block.push_back(parseIfStmt(s, mem)); break;
                 default: advance(s); break;
             }
         }
